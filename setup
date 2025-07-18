@@ -93,8 +93,10 @@ if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || 
     brew install --cask mactracker
 fi
 
-echo "Install QMK Toolbox? (y/n)"
+echo "Install and set up QMK and QMK Toolbox? (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install qmk/qmk/qmk
     brew install --cask qmk-toolbox
+    qmk setup
 fi
