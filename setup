@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Set up Homebrew
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# install the apps I use every day
+
+brew install --cask firefox -y
+brew install --cask visual-studio-code -y
+brew install fastfetch
+brew install byobu
+
