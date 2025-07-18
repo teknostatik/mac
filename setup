@@ -18,16 +18,82 @@ brew install --cask proton-vpn
 
 # install the apps I use occasionally
 
-brew install --cask gimp
-brew install --cask inkscape
-brew install --cask blender
-brew install --cask krita
-brew install --cask audacity
-brew install --cask handbrake
-brew install --cask calibre
-brew install --cask slack
-brew install --cask zoom
-brew install --cask microsoft-teams
-brew install --cask ungoogled-chromium
-brew install --cask mactracker
-brew install --cask qmk-toolbox
+echo "Optional applications - choose which ones to install:"
+
+echo "Install GIMP? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask gimp
+fi
+
+echo "Install Inkscape? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask inkscape
+fi
+
+echo "Install Blender? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask blender
+fi
+
+echo "Install Krita? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask krita
+fi
+
+echo "Install Audacity? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask audacity
+fi
+
+echo "Install HandBrake? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask handbrake
+fi
+
+echo "Install Calibre? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask calibre
+fi
+
+echo "Install Slack? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask slack
+fi
+
+echo "Install Zoom? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask zoom
+fi
+
+echo "Install Microsoft Teams? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask microsoft-teams
+fi
+
+echo "Install Ungoogled Chromium? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask ungoogled-chromium
+fi
+
+echo "Install MacTracker? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask mactracker
+fi
+
+echo "Install QMK Toolbox? (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask qmk-toolbox
+fi
