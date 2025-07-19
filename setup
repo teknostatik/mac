@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# This script sets up a new Mac with the applications I use regularly and occasionally.
+# It's under heavy development right now, and very experimental. Use at your own risk.
+
 # Set up Homebrew
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
