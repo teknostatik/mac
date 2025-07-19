@@ -19,6 +19,7 @@ brew install --cask vlc
 brew install --cask proton-drive
 brew install --cask protonvpn
 brew install --cask multipass
+brew install pandoc
 
 # install the apps I use occasionally
 
