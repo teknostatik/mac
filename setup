@@ -17,7 +17,7 @@ brew install --cask spotify
 brew install --cask dropbox
 brew install --cask vlc
 brew install --cask proton-drive
-brew install --cask proton-vpn
+brew install --cask protonvpn
 brew install --cask multipass
 
 # install the apps I use occasionally
