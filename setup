@@ -9,95 +9,163 @@
 
 # install the apps I use every day
 
-brew install --cask firefox
-brew install --cask visual-studio-code
-brew install fastfetch
-brew install byobu
-brew install --cask spotify
-brew install --cask dropbox
-brew install --cask vlc
-brew install --cask proton-drive
-brew install --cask protonvpn
-brew install --cask multipass
-brew install pandoc
+echo "Essential applications - choose which ones to install:"
+
+echo "Install Firefox? (web browser) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask firefox
+fi
+
+echo "Install Visual Studio Code? (code editor/IDE) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask visual-studio-code
+fi
+
+echo "Install fastfetch? (system information tool) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install fastfetch
+fi
+
+echo "Install byobu? (terminal multiplexer) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install byobu
+fi
+
+echo "Install Spotify? (music streaming) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask spotify
+fi
+
+echo "Install Dropbox? (cloud storage) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask dropbox
+fi
+
+echo "Install VLC? (media player) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask vlc
+fi
+
+echo "Install Proton Drive? (secure cloud storage) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask proton-drive
+fi
+
+echo "Install ProtonVPN? (VPN service) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask protonvpn
+fi
+
+echo "Install Multipass? (Ubuntu VM manager) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask multipass
+fi
+
+echo "Install Pandoc? (document converter) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install pandoc
+fi
 
 # install the apps I use occasionally
 
 echo "Optional applications - choose which ones to install:"
 
-echo "Install GIMP? (y/n)"
+echo "Install GIMP? (image editor) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask gimp
 fi
 
-echo "Install Inkscape? (y/n)"
+echo "Install Inkscape? (vector graphics editor) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask inkscape
 fi
 
-echo "Install Blender? (y/n)"
+echo "Install Blender? (3D modeling/animation) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask blender
 fi
 
-echo "Install Krita? (y/n)"
+echo "Install Krita? (digital painting) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask krita
 fi
 
-echo "Install Audacity? (y/n)"
+echo "Install Audacity? (audio editor) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask audacity
 fi
 
-echo "Install HandBrake? (y/n)"
+echo "Install HandBrake? (video transcoder) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask handbrake
 fi
 
-echo "Install Calibre? (y/n)"
+echo "Install Calibre? (ebook manager) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask calibre
 fi
 
-echo "Install Slack? (y/n)"
+echo "Install Slack? (team communication) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask slack
 fi
 
-echo "Install Zoom? (y/n)"
+echo "Install Zoom? (video conferencing) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask zoom
 fi
 
-echo "Install Microsoft Teams? (y/n)"
+echo "Install Microsoft Teams? (team collaboration) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask microsoft-teams
 fi
 
-echo "Install Ungoogled Chromium? (y/n)"
+echo "Install Ungoogled Chromium? (privacy-focused browser) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask ungoogled-chromium
 fi
 
-echo "Install MacTracker? (y/n)"
+echo "Install MacTracker? (Apple device specifications) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install --cask mactracker
 fi
 
-echo "Install and set up QMK and QMK Toolbox? (y/n)"
+echo "Install Vial? (keyboard configuration tool) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask vial
+fi
+
+echo "Install VIA? (keyboard remapping tool) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask via
+fi
+
+echo "Install and set up QMK and QMK Toolbox? (keyboard firmware development) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
     brew install qmk/qmk/qmk
