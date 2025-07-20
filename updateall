@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Update all software
+
+sudo softwareupdate -i -a
+brew update
+brew upgrade
+
+# Sync QMK
+
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/planck/ /Users/andy/qmk_firmware/keyboards/planck/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/preonic/ /Users/andy/qmk_firmware/keyboards/preonic/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/corne/ /Users/andy/qmk_firmware/keyboards/crkbd/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/corne36/ /Users/andy/qmk_firmware/keyboards/crkbd/keymaps/teknostatik36/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/HHKB/ /Users/andy/qmk_firmware/keyboards/hs60/v2/hhkb/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/gherkin/ /Users/andy/qmk_firmware/keyboards/40percentclub/gherkin/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/unix60/ /Users/andy/qmk_firmware/keyboards/fr4/unix60/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/ferris_sweep_mechboards/ /Users/andy/qmk_firmware/keyboards/ferris/keymaps/teknostatik_mb/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/ferris_sweep/ /Users/andy/qmk_firmware/keyboards/ferris/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/cantor/ /Users/andy/qmk_firmware/keyboards/cantor/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/tidbit/ /Users/andy/qmk_firmware/keyboards/nullbitsco/tidbit/keymaps/teknostatik
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/ok60/ /Users/andy/qmk_firmware/keyboards/ok60/keymaps/teknostatik/
+rsync -avz /Users/andy/Dropbox/Scripts/github/keyboards/planck_rev7/ /Users/andy/qmk_firmware/keyboards/planck/rev7/keymaps/teknostatik7
+
+echo "The script has now finished running."
