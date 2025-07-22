@@ -47,6 +47,12 @@ if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || 
     brew install --cask dropbox
 fi
 
+echo "Install ZeroTier One? (network virtualization) (y/n)"
+read -r response
+if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    brew install --cask zerotier-one
+fi
+
 echo "Install VLC? (media player) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
