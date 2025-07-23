@@ -4,6 +4,9 @@
 # It's under heavy development right now, and very experimental. Use at your own risk.
 
 # Set up Homebrew
+# This is required for installing applications and managing packages on macOS.
+
+if ! command -v brew &> /dev/null; then
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
