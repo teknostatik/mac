@@ -174,12 +174,32 @@ fi
 echo "Install Vial? (keyboard configuration tool) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    # Check if we're on Apple Silicon and install Rosetta if needed
+    if [[ $(uname -m) == "arm64" ]]; then
+        echo "Apple Silicon detected. Checking for Rosetta..."
+        if ! /usr/bin/pgrep -q oahd; then
+            echo "Installing Rosetta 2 (required for Vial on Apple Silicon)..."
+            /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+        else
+            echo "Rosetta 2 is already installed."
+        fi
+    fi
     brew install --cask vial
 fi
 
 echo "Install VIA? (keyboard remapping tool) (y/n)"
 read -r response
 if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+    # Check if we're on Apple Silicon and install Rosetta if needed
+    if [[ $(uname -m) == "arm64" ]]; then
+        echo "Apple Silicon detected. Checking for Rosetta..."
+        if ! /usr/bin/pgrep -q oahd; then
+            echo "Installing Rosetta 2 (required for VIA on Apple Silicon)..."
+            /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+        else
+            echo "Rosetta 2 is already installed."
+        fi
+    fi
     brew install --cask via
 fi
 
