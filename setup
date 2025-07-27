@@ -340,3 +340,23 @@ if ! brew list qmk/qmk/qmk &>/dev/null || ! brew list --cask qmk-toolbox &>/dev/
 else
     echo "QMK and QMK Toolbox are already installed, skipping..."
 fi
+
+if ! brew list --cask lastfm &>/dev/null; then
+    echo "Install Last.fm? (music scrobbling) (y/n)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        # Check if we're on Apple Silicon and install Rosetta if needed
+        if [[ $(uname -m) == "arm64" ]]; then
+            echo "Apple Silicon detected. Checking for Rosetta..."
+            if ! /usr/bin/pgrep -q oahd; then
+                echo "Installing Rosetta 2 (required for Last.fm on Apple Silicon)..."
+                /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+            else
+                echo "Rosetta 2 is already installed."
+            fi
+        fi
+        brew install --cask lastfm
+    fi
+else
+    echo "Last.fm is already installed, skipping..."
+fi
