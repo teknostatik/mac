@@ -137,6 +137,16 @@ else
     echo "Multipass is already installed, skipping..."
 fi
 
+if ! brew list --cask utm &>/dev/null; then
+    echo "Install UTM? (virtual machine host) (y/n)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask utm
+    fi
+else
+    echo "UTM is already installed, skipping..."
+fi
+
 if ! brew list pandoc &>/dev/null; then
     echo "Install Pandoc? (document converter) (y/n)"
     read -r response
