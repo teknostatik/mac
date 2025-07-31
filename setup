@@ -167,6 +167,22 @@ else
     echo "ripgrep is already installed, skipping..."
 fi
 
+if ! brew list eza &>/dev/null; then
+    echo "Install eza? (modern ls replacement) (y/n)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install eza
+        echo "Would you like to alias 'ls' to 'eza -l'? (y/n)"
+        read -r alias_response
+        if [ "$alias_response" = "y" ] || [ "$alias_response" = "Y" ] || [ "$alias_response" = "yes" ] || [ "$alias_response" = "Yes" ]; then
+            echo "alias ls='eza -l'" >> ~/.zshrc
+            echo "Alias added: 'ls' will now use 'eza -l' (restart terminal or run 'source ~/.zshrc' to activate)"
+        fi
+    fi
+else
+    echo "eza is already installed, skipping..."
+fi
+
 # install the apps I use occasionally
 
 echo "Optional applications - choose which ones to install:"
