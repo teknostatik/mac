@@ -15,7 +15,7 @@ fi
 echo "Essential applications - choose which ones to install:"
 
 if ! brew list --cask firefox &>/dev/null; then
-    echo "Install Firefox? (web browser) (y/n)"
+    echo "Install Firefox? (web browser) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask firefox
@@ -25,7 +25,7 @@ else
 fi
 
 if ! brew list --cask visual-studio-code &>/dev/null; then
-    echo "Install Visual Studio Code? (code editor/IDE) (y/n)"
+    echo "Install Visual Studio Code? (code editor/IDE) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask visual-studio-code
@@ -35,7 +35,7 @@ else
 fi
 
 if ! brew list fastfetch &>/dev/null; then
-    echo "Install fastfetch? (system information tool) (y/n)"
+    echo "Install fastfetch? (system information tool) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install fastfetch
@@ -45,7 +45,7 @@ else
 fi
 
 if ! brew list byobu &>/dev/null; then
-    echo "Install byobu? (terminal multiplexer) (y/n)"
+    echo "Install byobu? (terminal multiplexer) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install byobu
@@ -55,7 +55,7 @@ else
 fi
 
 if ! brew list htop &>/dev/null; then
-    echo "Install htop? (system monitor) (y/n)"
+    echo "Install htop? (system monitor) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install htop
@@ -68,7 +68,7 @@ else
 fi
 
 if ! brew list --cask spotify &>/dev/null; then
-    echo "Install Spotify? (music streaming) (y/n)"
+    echo "Install Spotify? (music streaming) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask spotify
@@ -78,7 +78,7 @@ else
 fi
 
 if ! brew list --cask dropbox &>/dev/null; then
-    echo "Install Dropbox? (cloud storage) (y/n)"
+    echo "Install Dropbox? (cloud storage) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask dropbox
@@ -88,7 +88,7 @@ else
 fi
 
 if ! brew list --cask zerotier-one &>/dev/null; then
-    echo "Install ZeroTier One? (network virtualization) (y/n)"
+    echo "Install ZeroTier One? (network virtualization) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask zerotier-one
@@ -98,7 +98,7 @@ else
 fi
 
 if ! brew list --cask vlc &>/dev/null; then
-    echo "Install VLC? (media player) (y/n)"
+    echo "Install VLC? (media player) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask vlc
@@ -108,7 +108,7 @@ else
 fi
 
 if ! brew list --cask proton-drive &>/dev/null; then
-    echo "Install Proton Drive? (secure cloud storage) (y/n)"
+    echo "Install Proton Drive? (secure cloud storage) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask proton-drive
@@ -118,7 +118,7 @@ else
 fi
 
 if ! brew list --cask protonvpn &>/dev/null; then
-    echo "Install ProtonVPN? (VPN service) (y/n)"
+    echo "Install ProtonVPN? (VPN service) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask protonvpn
@@ -128,7 +128,7 @@ else
 fi
 
 if ! brew list --cask multipass &>/dev/null; then
-    echo "Install Multipass? (Ubuntu VM manager) (y/n)"
+    echo "Install Multipass? (Ubuntu VM manager) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask multipass
@@ -138,7 +138,7 @@ else
 fi
 
 if ! brew list --cask utm &>/dev/null; then
-    echo "Install UTM? (virtual machine host) (y/n)"
+    echo "Install UTM? (virtual machine host) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask utm
@@ -148,7 +148,7 @@ else
 fi
 
 if ! brew list pandoc &>/dev/null; then
-    echo "Install Pandoc? (document converter) (y/n)"
+    echo "Install Pandoc? (document converter) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install pandoc
@@ -158,7 +158,7 @@ else
 fi
 
 if ! brew list ripgrep &>/dev/null; then
-    echo "Install ripgrep? (fast text search tool) (y/n)"
+    echo "Install ripgrep? (fast text search tool) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install ripgrep
@@ -168,11 +168,11 @@ else
 fi
 
 if ! brew list eza &>/dev/null; then
-    echo "Install eza? (modern ls replacement) (y/n)"
+    echo "Install eza? (modern ls replacement) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install eza
-        echo "Would you like to alias 'ls' to 'eza -l'? (y/n)"
+        echo "Would you like to alias 'ls' to 'eza -l'? (y/N)"
         read -r alias_response
         if [ "$alias_response" = "y" ] || [ "$alias_response" = "Y" ] || [ "$alias_response" = "yes" ] || [ "$alias_response" = "Yes" ]; then
             echo "alias ls='eza -l'" >> ~/.zshrc
@@ -188,7 +188,7 @@ fi
 echo "Optional applications - choose which ones to install:"
 
 if ! brew list --cask gimp &>/dev/null; then
-    echo "Install GIMP? (image editor) (y/n)"
+    echo "Install GIMP? (image editor) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask gimp
@@ -198,7 +198,7 @@ else
 fi
 
 if ! brew list --cask inkscape &>/dev/null; then
-    echo "Install Inkscape? (vector graphics editor) (y/n)"
+    echo "Install Inkscape? (vector graphics editor) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask inkscape
@@ -208,7 +208,7 @@ else
 fi
 
 if ! brew list --cask blender &>/dev/null; then
-    echo "Install Blender? (3D modeling/animation) (y/n)"
+    echo "Install Blender? (3D modeling/animation) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask blender
@@ -218,7 +218,7 @@ else
 fi
 
 if ! brew list --cask krita &>/dev/null; then
-    echo "Install Krita? (digital painting) (y/n)"
+    echo "Install Krita? (digital painting) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask krita
@@ -228,7 +228,7 @@ else
 fi
 
 if ! brew list --cask audacity &>/dev/null; then
-    echo "Install Audacity? (audio editor) (y/n)"
+    echo "Install Audacity? (audio editor) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask audacity
@@ -238,7 +238,7 @@ else
 fi
 
 if ! brew list --cask handbrake &>/dev/null; then
-    echo "Install HandBrake? (video transcoder) (y/n)"
+    echo "Install HandBrake? (video transcoder) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask handbrake
@@ -248,7 +248,7 @@ else
 fi
 
 if ! brew list --cask calibre &>/dev/null; then
-    echo "Install Calibre? (ebook manager) (y/n)"
+    echo "Install Calibre? (ebook manager) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask calibre
@@ -258,7 +258,7 @@ else
 fi
 
 if ! brew list --cask slack &>/dev/null; then
-    echo "Install Slack? (team communication) (y/n)"
+    echo "Install Slack? (team communication) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask slack
@@ -268,7 +268,7 @@ else
 fi
 
 if ! brew list --cask zoom &>/dev/null; then
-    echo "Install Zoom? (video conferencing) (y/n)"
+    echo "Install Zoom? (video conferencing) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask zoom
@@ -278,7 +278,7 @@ else
 fi
 
 if ! brew list --cask microsoft-teams &>/dev/null; then
-    echo "Install Microsoft Teams? (team collaboration) (y/n)"
+    echo "Install Microsoft Teams? (team collaboration) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask microsoft-teams
@@ -288,7 +288,7 @@ else
 fi
 
 if ! brew list --cask ungoogled-chromium &>/dev/null; then
-    echo "Install Ungoogled Chromium? (privacy-focused browser) (y/n)"
+    echo "Install Ungoogled Chromium? (privacy-focused browser) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask ungoogled-chromium
@@ -298,7 +298,7 @@ else
 fi
 
 if ! brew list --cask mactracker &>/dev/null; then
-    echo "Install MacTracker? (Apple device specifications) (y/n)"
+    echo "Install MacTracker? (Apple device specifications) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask mactracker
@@ -308,7 +308,7 @@ else
 fi
 
 if ! brew list --cask vial &>/dev/null; then
-    echo "Install Vial? (keyboard configuration tool) (y/n)"
+    echo "Install Vial? (keyboard configuration tool) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         # Check if we're on Apple Silicon and install Rosetta if needed
@@ -328,7 +328,7 @@ else
 fi
 
 if ! brew list --cask via &>/dev/null; then
-    echo "Install VIA? (keyboard remapping tool) (y/n)"
+    echo "Install VIA? (keyboard remapping tool) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         # Check if we're on Apple Silicon and install Rosetta if needed
@@ -348,7 +348,7 @@ else
 fi
 
 if ! brew list qmk/qmk/qmk &>/dev/null || ! brew list --cask qmk-toolbox &>/dev/null; then
-    echo "Install and set up QMK and QMK Toolbox? (keyboard firmware development) (y/n)"
+    echo "Install and set up QMK and QMK Toolbox? (keyboard firmware development) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         if ! brew list qmk/qmk/qmk &>/dev/null; then
@@ -368,7 +368,7 @@ else
 fi
 
 if ! brew list --cask lastfm &>/dev/null; then
-    echo "Install Last.fm? (music scrobbling) (y/n)"
+    echo "Install Last.fm? (music scrobbling) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         # Check if we're on Apple Silicon and install Rosetta if needed
