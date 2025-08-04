@@ -183,6 +183,26 @@ else
     echo "eza is already installed, skipping..."
 fi
 
+# Ask if user wants to continue with optional apps
+
+echo ""
+echo "Would you like to install any optional applications?"
+echo "Available options include: GIMP, Inkscape, Blender, Krita, Audacity, HandBrake,"
+echo "Calibre, Slack, Zoom, Microsoft Teams, Ungoogled Chromium, MacTracker,"
+echo "Vial, VIA, QMK tools, Last.fm, and more..."
+echo ""
+echo "Continue with optional applications? (y/N)"
+read -r continue_response
+
+if [ "$continue_response" = "y" ] || [ "$continue_response" = "Y" ] || [ "$continue_response" = "yes" ] || [ "$continue_response" = "Yes" ]; then
+    # install the apps I use occasionally
+    echo "Optional applications - choose which ones to install:"
+    // ...existing optional apps code...
+else
+    echo "Skipping optional applications. Setup complete!"
+    exit 0
+fi
+
 # install the apps I use occasionally
 
 echo "Optional applications - choose which ones to install:"
