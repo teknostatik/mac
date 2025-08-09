@@ -437,3 +437,18 @@ if ! brew list --cask lastfm &>/dev/null; then
 else
     echo "Last.fm is already installed, skipping..."
 fi
+
+if ! brew list --cask deskflow &>/dev/null; then
+    echo "Install Deskflow? (keyboard/mouse sharing) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        # Check if the deskflow tap is already added
+        if ! brew tap | grep -q "deskflow/homebrew-tap"; then
+            echo "Adding Deskflow tap..."
+            brew tap deskflow/homebrew-tap
+        fi
+        brew install --cask deskflow
+    fi
+else
+    echo "Deskflow is already installed, skipping..."
+fi
