@@ -220,7 +220,7 @@ echo ""
 echo "Would you like to install any optional applications?"
 echo "Available options include: GIMP, Inkscape, Blender, Krita, Audacity, HandBrake,"
 echo "Calibre, Slack, Zoom, Microsoft Teams, Ungoogled Chromium, MacTracker,"
-echo "Vial, VIA, QMK tools, Last.fm, Ollama, and more..."
+echo "Vial, VIA, QMK tools, Last.fm, Ollama, LM Studio, DisplayLink, and more..."
 echo ""
 echo "Continue with optional applications? (y/N)"
 read -r continue_response
@@ -475,4 +475,37 @@ if ! brew list ollama &>/dev/null; then
     fi
 else
     echo "Ollama is already installed, skipping..."
+fi
+
+# LM Studio (local model UI)
+if ! brew list --cask lm-studio &>/dev/null; then
+    echo "Install LM Studio? (local AI model UI) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask lm-studio
+        echo "Launch LM Studio now? (y/N)"
+        read -r launch
+        if [ "$launch" = "y" ] || [ "$launch" = "Y" ] || [ "$launch" = "yes" ] || [ "$launch" = "Yes" ]; then
+            open -a "LM Studio"
+        fi
+    fi
+else
+    echo "LM Studio is already installed, skipping..."
+fi
+
+# DisplayLink Manager (USB display drivers)
+if ! brew list --cask displaylink &>/dev/null; then
+    echo "Install DisplayLink Manager? (USB display drivers) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask displaylink
+        echo "Launch DisplayLink Manager now to grant permissions? (y/N)"
+        read -r launch
+        if [ "$launch" = "y" ] || [ "$launch" = "Y" ] || [ "$launch" = "yes" ] || [ "$launch" = "Yes" ]; then
+            open -a "DisplayLink Manager"
+            echo "Note: Grant Screen Recording and Accessibility permissions in System Settings > Privacy & Security."
+        fi
+    fi
+else
+    echo "DisplayLink Manager is already installed, skipping..."
 fi
