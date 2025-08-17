@@ -220,7 +220,7 @@ echo ""
 echo "Would you like to install any optional applications?"
 echo "Available options include: GIMP, Inkscape, Blender, Krita, Audacity, HandBrake,"
 echo "Calibre, Slack, Zoom, Microsoft Teams, Ungoogled Chromium, MacTracker,"
-echo "Vial, VIA, QMK tools, Last.fm, and more..."
+echo "Vial, VIA, QMK tools, Last.fm, Ollama, and more..."
 echo ""
 echo "Continue with optional applications? (y/N)"
 read -r continue_response
@@ -451,4 +451,28 @@ if ! brew list --cask deskflow &>/dev/null; then
     fi
 else
     echo "Deskflow is already installed, skipping..."
+fi
+
+# Ollama (local LLM runtime)
+if ! brew list ollama &>/dev/null; then
+    echo "Install Ollama? (local LLM runtime) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install ollama
+        echo "Start Ollama as a background service now? (y/N)"
+        read -r svc
+        if [ "$svc" = "y" ] || [ "$svc" = "Y" ] || [ "$svc" = "yes" ] || [ "$svc" = "Yes" ]; then
+            brew services start ollama
+            echo "Ollama service started."
+            echo "Download a starter model (llama3)? (y/N)"
+            read -r model_response
+            if [ "$model_response" = "y" ] || [ "$model_response" = "Y" ] || [ "$model_response" = "yes" ] || [ "$model_response" = "Yes" ]; then
+                ollama pull llama3
+            fi
+        else
+            echo "You can start it later with: brew services start ollama"
+        fi
+    fi
+else
+    echo "Ollama is already installed, skipping..."
 fi
