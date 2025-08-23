@@ -138,6 +138,16 @@ else
     echo "VLC is already installed, skipping..."
 fi
 
+if ! brew list --cask caffeine &>/dev/null; then
+    echo "Install Caffeine? (prevent display sleep, menu bar app) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask caffeine
+    fi
+else
+    echo "Caffeine is already installed, skipping..."
+fi
+
 if ! brew list --cask proton-drive &>/dev/null; then
     echo "Install Proton Drive? (secure cloud storage) (y/N)"
     read -r response
@@ -218,8 +228,8 @@ fi
 
 echo ""
 echo "Would you like to install any optional applications?"
-echo "Available options include: GIMP, Inkscape, Blender, Krita, Audacity, HandBrake,"
-echo "Calibre, Slack, Zoom, Microsoft Teams, Ungoogled Chromium, MacTracker,"
+echo "Available options include: GIMP, Audacity, HandBrake,"
+echo "Calibre, Zoom, Microsoft Teams, Ungoogled Chromium, Google Chrome, MacTracker,"
 echo "Vial, VIA, QMK tools, Last.fm, Ollama, LM Studio, DisplayLink, and more..."
 echo ""
 echo "Continue with optional applications? (y/N)"
@@ -248,35 +258,7 @@ else
     echo "GIMP is already installed, skipping..."
 fi
 
-if ! brew list --cask inkscape &>/dev/null; then
-    echo "Install Inkscape? (vector graphics editor) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask inkscape
-    fi
-else
-    echo "Inkscape is already installed, skipping..."
-fi
 
-if ! brew list --cask blender &>/dev/null; then
-    echo "Install Blender? (3D modeling/animation) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask blender
-    fi
-else
-    echo "Blender is already installed, skipping..."
-fi
-
-if ! brew list --cask krita &>/dev/null; then
-    echo "Install Krita? (digital painting) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask krita
-    fi
-else
-    echo "Krita is already installed, skipping..."
-fi
 
 if ! brew list --cask audacity &>/dev/null; then
     echo "Install Audacity? (audio editor) (y/N)"
@@ -308,14 +290,15 @@ else
     echo "Calibre is already installed, skipping..."
 fi
 
-if ! brew list --cask slack &>/dev/null; then
-    echo "Install Slack? (team communication) (y/N)"
+
+if ! brew list --cask google-chrome &>/dev/null; then
+    echo "Install Google Chrome? (web browser) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask slack
+        brew install --cask google-chrome
     fi
 else
-    echo "Slack is already installed, skipping..."
+    echo "Google Chrome is already installed, skipping..."
 fi
 
 if ! brew list --cask zoom &>/dev/null; then
