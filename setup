@@ -244,6 +244,15 @@ else
     exit 0
 fi
 
+if ! brew list --cask iterm2 &>/dev/null; then
+    echo "Install iTerm2? (terminal emulator) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask iterm2
+    fi
+else
+    echo "iTerm2 is already installed, skipping..."
+
 # install the apps I use occasionally
 
 echo "Optional applications - choose which ones to install:"
