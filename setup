@@ -238,7 +238,7 @@ read -r continue_response
 if [ "$continue_response" = "y" ] || [ "$continue_response" = "Y" ] || [ "$continue_response" = "yes" ] || [ "$continue_response" = "Yes" ]; then
     # install the apps I use occasionally
     echo "Optional applications - choose which ones to install:"
-    
+
 else
     echo "Skipping optional applications. Setup complete!"
     exit 0
@@ -252,6 +252,7 @@ if ! brew list --cask iterm2 &>/dev/null; then
     fi
 else
     echo "iTerm2 is already installed, skipping..."
+fi
 
 # install the apps I use occasionally
 
