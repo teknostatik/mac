@@ -502,3 +502,14 @@ if ! brew list --cask displaylink &>/dev/null; then
 else
     echo "DisplayLink Manager is already installed, skipping..."
 fi
+
+# bandcamp-dl (Bandcamp downloader)
+if ! brew list bandcamp-dl &>/dev/null; then
+    echo "Install bandcamp-dl? (Bandcamp music downloader) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install bandcamp-dl
+    fi
+else
+    echo "bandcamp-dl is already installed, skipping..."
+fi
