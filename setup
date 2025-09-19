@@ -513,3 +513,14 @@ if ! brew list bandcamp-dl &>/dev/null; then
 else
     echo "bandcamp-dl is already installed, skipping..."
 fi
+
+# Container (sandboxed app environments)
+if ! brew list --cask container &>/dev/null; then
+    echo "Install Container? (app sandboxing) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask container
+    fi
+else
+    echo "Container is already installed, skipping..."
+fi
