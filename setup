@@ -524,3 +524,14 @@ if ! brew list --cask container &>/dev/null; then
 else
     echo "Container is already installed, skipping..."
 fi
+
+# macpine (lightweight Alpine Linux VM)
+if ! brew list --cask macpine &>/dev/null; then
+    echo "Install macpine? (lightweight Alpine Linux VM) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask macpine
+    fi
+else
+    echo "macpine is already installed, skipping..."
+fi
