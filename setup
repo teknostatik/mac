@@ -198,6 +198,16 @@ else
     echo "Pandoc is already installed, skipping..."
 fi
 
+if ! brew list --cask burn &>/dev/null; then
+    echo "Install Burn? (CD/DVD burning application) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask burn
+    fi
+else
+    echo "Burn is already installed, skipping..."
+fi
+
 if ! brew list ripgrep &>/dev/null; then
     echo "Install ripgrep? (fast text search tool) (y/N)"
     read -r response
