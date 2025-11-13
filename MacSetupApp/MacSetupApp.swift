@@ -64,10 +64,16 @@ struct ContentView: View {
             // Input field (for interactive prompts)
             if scriptRunner.isWaitingForInput {
                 HStack {
-                    TextField("Your response (y/N):", text: $scriptRunner.userInput)
+                    TextField("Your response (press Enter for default, or type y/n):", text: $scriptRunner.userInput)
                         .textFieldStyle(.roundedBorder)
                         .onSubmit {
                             scriptRunner.submitInput()
+                        }
+                        .onAppear {
+                            // Auto-focus the text field when it appears
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                NSApp.keyWindow?.makeFirstResponder(nil)
+                            }
                         }
                     
                     Button("Submit") {
@@ -96,6 +102,16 @@ struct ContentView: View {
                             .scaleEffect(0.8)
                         Text("Running...")
                             .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            scriptRunner.stopScript()
+                        }) {
+                            Label("Stop", systemImage: "stop.fill")
+                        }
+                        .buttonStyle(.bordered)
+                        .foregroundColor(.red)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -107,6 +123,15 @@ struct ContentView: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(scriptRunner.isRunning)
+                
+                if scriptRunner.isRunning && !scriptRunner.isWaitingForInput {
+                    Button(action: {
+                        scriptRunner.isWaitingForInput = true
+                    }) {
+                        Label("Enter Input", systemImage: "keyboard")
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
             .padding()
             .background(Color(NSColor.controlBackgroundColor))
@@ -150,9 +175,15 @@ class ScriptRunner: ObservableObject {
                     DispatchQueue.main.async {
                         self?.output += string
                         
-                        // Check if waiting for input (looking for question marks or y/N patterns)
-                        let lastLine = string.split(separator: "\n").last ?? ""
-                        if lastLine.contains("?") || lastLine.contains("(y/N)") || lastLine.contains("(Y/n)") {
+                        // Check if waiting for input
+                        let trimmedOutput = self?.output.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                        
+                        // Look for various input prompts
+                        if trimmedOutput.hasSuffix("Press Enter to continue, or Ctrl+C to exit...") ||
+                           trimmedOutput.contains("(y/N)") ||
+                           trimmedOutput.contains("(Y/n)") ||
+                           trimmedOutput.hasSuffix("?") ||
+                           string.contains("read -r") {
                             self?.isWaitingForInput = true
                         }
                     }
@@ -180,6 +211,7 @@ class ScriptRunner: ObservableObject {
     func submitInput() {
         guard let inputPipe = inputPipe else { return }
         
+        // If user just presses enter with empty input, send empty line (default response)
         let input = userInput + "\n"
         if let data = input.data(using: .utf8) {
             inputPipe.fileHandleForWriting.write(data)
@@ -187,6 +219,13 @@ class ScriptRunner: ObservableObject {
         
         userInput = ""
         isWaitingForInput = false
+    }
+    
+    func stopScript() {
+        process?.terminate()
+        isRunning = false
+        isWaitingForInput = false
+        output += "\n\n⚠️ Script stopped by user.\n"
     }
     
     func clear() {
