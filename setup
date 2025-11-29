@@ -65,6 +65,16 @@ else
     echo "Visual Studio Code is already installed, skipping..."
 fi
 
+if ! brew list gh &>/dev/null; then
+    echo "Install GitHub CLI? (gh command line tool) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install gh
+    fi
+else
+    echo "GitHub CLI is already installed, skipping..."
+fi
+
 if ! brew list fastfetch &>/dev/null; then
     echo "Install fastfetch? (system information tool) (y/N)"
     read -r response
