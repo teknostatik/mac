@@ -1,5 +1,21 @@
 # macOS Setup Scripts
 
+```
+    ███╗   ███╗ █████╗  ██████╗ ██████╗ ███████╗
+    ████╗ ████║██╔══██╗██╔════╝██╔═══██╗██╔════╝
+    ██╔████╔██║███████║██║     ██║   ██║███████╗
+    ██║╚██╔╝██║██╔══██║██║     ██║   ██║╚════██║
+    ██║ ╚═╝ ██║██║  ██║╚██████╗╚██████╔╝███████║
+    ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
+                                                 
+    ███████╗███████╗████████╗██╗   ██╗██████╗   
+    ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗  
+    ███████╗█████╗     ██║   ██║   ██║██████╔╝  
+    ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝   
+    ███████║███████╗   ██║   ╚██████╔╝██║       
+    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝       
+```
+
 Comprehensive installation and configuration scripts for macOS systems. This collection provides automated setup tools using both Homebrew and Nix package managers, QMK firmware build automation, and system maintenance utilities.
 
 ## Contents
