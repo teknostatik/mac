@@ -555,3 +555,14 @@ if ! brew list macpine &>/dev/null; then
 else
     echo "macpine is already installed, skipping..."
 fi
+
+# tldr (community-driven man page alternatives)
+if ! brew list tldr &>/dev/null; then
+    echo "Install tldr? (simplified command-line documentation) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install tldr
+    fi
+else
+    echo "tldr is already installed, skipping..."
+fi
