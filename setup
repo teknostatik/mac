@@ -108,6 +108,16 @@ else
     echo "htop is already installed, skipping..."
 fi
 
+if ! brew list imagemagick &>/dev/null; then
+    echo "Install ImageMagick? (image manipulation tool) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install imagemagick
+    fi
+else
+    echo "ImageMagick is already installed, skipping..."
+fi
+
 if ! brew list --cask spotify &>/dev/null; then
     echo "Install Spotify? (music streaming) (y/N)"
     read -r response
