@@ -361,6 +361,16 @@ else
     echo "Microsoft Teams is already installed, skipping..."
 fi
 
+if ! brew list --cask whatsapp &>/dev/null; then
+    echo "Install WhatsApp? (messaging app) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask whatsapp
+    fi
+else
+    echo "WhatsApp is already installed, skipping..."
+fi
+
 if ! brew list --cask ungoogled-chromium &>/dev/null; then
     echo "Install Ungoogled Chromium? (privacy-focused browser) (y/N)"
     read -r response
