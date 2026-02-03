@@ -597,6 +597,17 @@ else
     echo "tldr is already installed, skipping..."
 fi
 
+# Node.js (JavaScript runtime)
+if ! brew list node &>/dev/null; then
+    echo "Install Node.js? (JavaScript runtime) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install node
+    fi
+else
+    echo "Node.js is already installed, skipping..."
+fi
+
 # Raspberry Pi Imager (SD card imaging tool)
 if ! brew list --cask raspberry-pi-imager &>/dev/null; then
     echo "Install Raspberry Pi Imager? (SD card imaging tool for Raspberry Pi) (y/N)"
