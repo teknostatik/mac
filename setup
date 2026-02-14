@@ -618,3 +618,14 @@ if ! brew list --cask raspberry-pi-imager &>/dev/null; then
 else
     echo "Raspberry Pi Imager is already installed, skipping..."
 fi
+
+# Transmission (BitTorrent client)
+if ! brew list --cask transmission &>/dev/null; then
+    echo "Install Transmission? (BitTorrent client) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask transmission
+    fi
+else
+    echo "Transmission is already installed, skipping..."
+fi
