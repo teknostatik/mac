@@ -133,6 +133,11 @@ if ! brew list --cask dropbox &>/dev/null; then
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
         brew install --cask dropbox
+        echo "Also install Dropbox Dash? (AI-powered search) (y/N)"
+        read -r dash_response
+        if [ "$dash_response" = "y" ] || [ "$dash_response" = "Y" ] || [ "$dash_response" = "yes" ] || [ "$dash_response" = "Yes" ]; then
+            brew install --cask dropbox-dash
+        fi
     fi
 else
     echo "Dropbox is already installed, skipping..."
