@@ -541,6 +541,17 @@ else
     echo "LM Studio is already installed, skipping..."
 fi
 
+# OpenClaw (AI assistant)
+if ! brew list --cask openclaw &>/dev/null; then
+    echo "Install OpenClaw? (AI assistant) (y/N)"
+    read -r response
+    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
+        brew install --cask openclaw
+    fi
+else
+    echo "OpenClaw is already installed, skipping..."
+fi
+
 # DisplayLink Manager (USB display drivers)
 if ! brew list --cask displaylink &>/dev/null; then
     echo "Install DisplayLink Manager? (USB display drivers) (y/N)"
