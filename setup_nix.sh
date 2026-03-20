@@ -17,7 +17,7 @@
 # • Configures shell aliases and environment
 # • Handles Apple Silicon compatibility automatically
 
-set -e  # Exit on any error
+set -euo pipefail  # Exit on error, unset variable, or pipe failure
 
 # Color codes for output
 RED='\033[0;31m'
@@ -72,7 +72,7 @@ install_nix_package() {
     local package="$1"
     local name="$2"
     
-    if nix-env -q | grep -q "^$package"; then
+    if nix-env -q | grep -q "^${package}-"; then
         echo "$name is already installed, skipping..."
     else
         log "Installing $name..."
@@ -132,26 +132,32 @@ fi
 # Enable flakes and the new command interface
 log "Configuring Nix with flakes support..."
 mkdir -p ~/.config/nix
-cat > ~/.config/nix/nix.conf << 'EOF'
+if ! grep -q 'experimental-features' ~/.config/nix/nix.conf 2>/dev/null; then
+    cat >> ~/.config/nix/nix.conf << 'EOF'
 experimental-features = nix-command flakes
 auto-optimise-store = true
 EOF
+fi
 
 # Install nix-darwin for macOS integration
 log "Setting up nix-darwin for macOS integration..."
 if ! command_exists darwin-rebuild; then
     log "Installing nix-darwin..."
-    nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
-    ./result/bin/darwin-installer
+        $(nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer --no-link)/bin/darwin-installer
 else
     log "nix-darwin is already installed."
 fi
+
+# Detect architecture for platform configuration
+ARCH=$(uname -m)
+NIX_PLATFORM=$([[ "$ARCH" == "arm64" ]] && echo "aarch64-darwin" || echo "x86_64-darwin")
 
 # Create a basic configuration directory
 log "Setting up Nix configuration..."
 mkdir -p ~/.config/nix-darwin
 if [ ! -f ~/.config/nix-darwin/flake.nix ]; then
-    cat > ~/.config/nix-darwin/flake.nix << 'EOF'
+        MAC_HOSTNAME=$(scutil --get LocalHostName)
+        cat > ~/.config/nix-darwin/flake.nix << EOF
 {
   description = "macOS system configuration";
 
@@ -169,11 +175,11 @@ if [ ! -f ~/.config/nix-darwin/flake.nix ]; then
       programs.zsh.enable = true;
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 4;
-      nixpkgs.hostPlatform = "aarch64-darwin";  # Change to x86_64-darwin for Intel Macs
+            nixpkgs.hostPlatform = "${NIX_PLATFORM}";
     };
   in
   {
-    darwinConfigurations."$(scutil --get LocalHostName)" = nix-darwin.lib.darwinSystem {
+        darwinConfigurations."${MAC_HOSTNAME}" = nix-darwin.lib.darwinSystem {
       modules = [ configuration ];
     };
   };
@@ -253,7 +259,8 @@ warning "Note: GUI applications require special handling with Nix on macOS."
 warning "Some applications may need to be installed via nixpkgs or built from source."
 
 # Create a shell script to install GUI apps via Nix when possible
-cat > ~/install_gui_apps.sh << 'EOF'
+mkdir -p ~/.local/bin
+cat > ~/.local/bin/install_gui_apps.sh << 'EOF'
 #!/bin/bash
 
 # This script installs GUI applications that are available in nixpkgs
@@ -270,10 +277,12 @@ else
 fi
 
 # VS Code (code-server for now, or use the macOS app)
+# code-server (browser-based VS Code server — not the VS Code desktop app)
+# For the VS Code desktop app on macOS, use: https://code.visualstudio.com/
 if nix-env -q | grep -q code-server; then
-    echo "VS Code server is already installed"
+    echo "code-server is already installed"
 else
-    echo "Installing VS Code server..."
+    echo "Installing code-server..."
     nix-env -iA nixpkgs.code-server
 fi
 
@@ -298,16 +307,18 @@ echo "Note: Some applications may require additional configuration for proper ma
 EOF
 
 chmod +x ~/install_gui_apps.sh
+chmod +x ~/.local/bin/install_gui_apps.sh
 
 if ask_install "GUI Applications" "install available GUI applications via Nix"; then
     log "Running GUI application installer..."
-    ~/install_gui_apps.sh
+    ~/.local/bin/install_gui_apps.sh
 fi
 
 # For applications not available in Nix, provide alternative installation methods
 log "Setting up alternative installation methods for macOS-specific applications..."
 
 cat > ~/install_macos_apps.sh << 'EOF'
+cat > ~/.local/bin/install_macos_apps.sh << 'EOF'
 #!/bin/bash
 
 # Alternative installation script for macOS-specific applications
@@ -343,6 +354,7 @@ echo "• Homebrew (if you prefer to use both package managers)"
 EOF
 
 chmod +x ~/install_macos_apps.sh
+chmod +x ~/.local/bin/install_macos_apps.sh
 
 # Development environment setup
 log "Setting up development environment..."
@@ -366,7 +378,10 @@ fi
 log "Setting up shell configuration..."
 
 if ask_install "Enhanced Shell Configuration" "add useful aliases and functions"; then
-    cat >> ~/.zshrc << 'EOF'
+    if grep -q 'Nix-managed environment aliases' ~/.zshrc 2>/dev/null; then
+        warning "Shell aliases already present in ~/.zshrc, skipping..."
+    else
+        cat >> ~/.zshrc << 'EOF'
 
 # Nix-managed environment aliases
 alias ll='ls -alF'
@@ -380,7 +395,7 @@ alias df='df -h'
 alias du='du -h'
 alias free='vm_stat'
 alias ps='ps aux'
-alias ports='netstat -tulanp'
+alias ports='lsof -i'
 
 # Git aliases
 alias gs='git status'
@@ -408,13 +423,17 @@ alias hide-hidden='defaults write com.apple.finder AppleShowAllFiles NO && killa
 alias sysinfo='fastfetch 2>/dev/null || neofetch 2>/dev/null || system_profiler SPSoftwareDataType'
 alias myip='curl -s ifconfig.me'
 
+# Local scripts directory
+export PATH="$HOME/.local/bin:$PATH"
+
 # Add Nix to PATH if not already there
 if [ -e ~/.nix-profile/etc/profile.d/nix.sh ]; then
     source ~/.nix-profile/etc/profile.d/nix.sh
 fi
 EOF
 
-    log "Shell aliases and functions added to ~/.zshrc"
+        log "Shell aliases and functions added to ~/.zshrc"
+    fi
 fi
 
 # Nix channels and updates
@@ -424,6 +443,7 @@ nix-channel --update
 
 log "Creating Nix management script..."
 cat > ~/nix-maintenance.sh << 'EOF'
+cat > ~/.local/bin/nix-maintenance.sh << 'EOF'
 #!/bin/bash
 
 # Nix system maintenance script
@@ -446,12 +466,14 @@ echo "Maintenance completed!"
 EOF
 
 chmod +x ~/nix-maintenance.sh
+chmod +x ~/.local/bin/nix-maintenance.sh
 
 # Final setup
 log "Finalizing setup..."
 
 # Create a system configuration update script
 cat > ~/update-darwin-config.sh << 'EOF'
+cat > ~/.local/bin/update-darwin-config.sh << 'EOF'
 #!/bin/bash
 
 # Script to rebuild the darwin configuration
@@ -461,6 +483,7 @@ darwin-rebuild switch --flake .
 EOF
 
 chmod +x ~/update-darwin-config.sh
+chmod +x ~/.local/bin/update-darwin-config.sh
 
 # Completion message
 echo ""
@@ -477,9 +500,9 @@ echo "• Enhanced shell configuration"
 echo ""
 warning "Important next steps:"
 echo "1. Restart your terminal or run: source ~/.zshrc"
-echo "2. For GUI applications, run: ~/install_macos_apps.sh"
-echo "3. Regular maintenance: ~/nix-maintenance.sh"
-echo "4. Update system config: ~/update-darwin-config.sh"
+echo "2. For GUI applications, run: ~/.local/bin/install_macos_apps.sh"
+echo "3. Regular maintenance: ~/.local/bin/nix-maintenance.sh"
+echo "4. Update system config: ~/.local/bin/update-darwin-config.sh"
 echo ""
 info "Useful Nix commands:"
 echo "• Search packages: nix search nixpkgs <package-name>"
