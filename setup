@@ -541,15 +541,17 @@ else
     echo "LM Studio is already installed, skipping..."
 fi
 
-# OpenClaw (AI assistant)
-if ! brew list --cask openclaw &>/dev/null; then
-    echo "Install OpenClaw? (AI assistant) (y/N)"
+# HRM (Home Row Mods for macOS)
+if ! brew list --cask hrm &>/dev/null; then
+    echo "Install HRM? (home row mods menu bar app) (y/N)"
     read -r response
     if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask openclaw
+        brew tap wontaeyang/hrm
+        brew install --cask hrm
+        echo "Note: Launch HRM and grant Accessibility permission in System Settings > Privacy & Security > Accessibility."
     fi
 else
-    echo "OpenClaw is already installed, skipping..."
+    echo "HRM is already installed, skipping..."
 fi
 
 # DisplayLink Manager (USB display drivers)
