@@ -1,7 +1,316 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # This script sets up a new Mac with the applications I use regularly and occasionally.
-# It's under heavy development right now, and very experimental. Use at your own risk.
+# It is interactive and groups software by theme so related tools are easier to choose.
+
+is_yes() {
+    case "$1" in
+        y|Y|yes|Yes|YES)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+prompt_yes_no() {
+    local prompt="$1"
+    local response
+
+    echo "$prompt (y/N)"
+    read -r response
+    is_yes "$response"
+}
+
+append_alias_once() {
+    local alias_line="$1"
+    local shell_rc="$HOME/.zshrc"
+
+    touch "$shell_rc"
+    if ! grep -Fqx "$alias_line" "$shell_rc"; then
+        echo "$alias_line" >> "$shell_rc"
+        echo "Alias added: $alias_line"
+        echo "Restart your terminal or run 'source ~/.zshrc' to activate it."
+    else
+        echo "Alias already present in ~/.zshrc, skipping..."
+    fi
+}
+
+ensure_rosetta() {
+    if [ "$(uname -m)" != "arm64" ]; then
+        return 0
+    fi
+
+    echo "Apple Silicon detected. Checking for Rosetta..."
+    if ! /usr/bin/pgrep -q oahd; then
+        echo "Installing Rosetta 2..."
+        /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+    else
+        echo "Rosetta 2 is already installed."
+    fi
+}
+
+ensure_brew_tap() {
+    local tap_name="$1"
+
+    if ! brew tap | grep -qx "$tap_name"; then
+        echo "Adding Homebrew tap: $tap_name"
+        brew tap "$tap_name"
+    fi
+}
+
+ensure_homebrew() {
+    if ! command -v brew >/dev/null 2>&1; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+
+    if [ -x /opt/homebrew/bin/brew ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [ -x /usr/local/bin/brew ]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+}
+
+is_installed() {
+    local kind="$1"
+    local package_name="$2"
+
+    case "$kind" in
+        cask)
+            brew list --cask "$package_name" >/dev/null 2>&1
+            ;;
+        formula)
+            brew list "$package_name" >/dev/null 2>&1
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+install_package() {
+    local kind="$1"
+    local package_name="$2"
+
+    case "$kind" in
+        cask)
+            brew install --cask "$package_name"
+            ;;
+        formula)
+            brew install "$package_name"
+            ;;
+    esac
+}
+
+is_bundle_installed() {
+    local key="$1"
+
+    case "$key" in
+        qmk)
+            is_installed formula qmk/qmk/qmk && is_installed cask qmk-toolbox
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+run_hook() {
+    local hook_name="$1"
+
+    case "$hook_name" in
+        none)
+            ;;
+        alias_top_htop)
+            if prompt_yes_no "Would you like to alias 'top' to 'htop'?"; then
+                append_alias_once "alias top='htop'"
+            fi
+            ;;
+        alias_ls_eza)
+            if prompt_yes_no "Would you like to alias 'ls' to 'eza -l'?"; then
+                append_alias_once "alias ls='eza -l'"
+            fi
+            ;;
+        dropbox_dash)
+            if ! is_installed cask dropbox-dash && prompt_yes_no "Also install Dropbox Dash? (AI-powered search)"; then
+                brew install --cask dropbox-dash
+            fi
+            ;;
+        ensure_rosetta)
+            ensure_rosetta
+            ;;
+        lm_studio_launch)
+            if prompt_yes_no "Launch LM Studio now?"; then
+                open -a "LM Studio"
+            fi
+            ;;
+        displaylink_launch)
+            if prompt_yes_no "Launch DisplayLink Manager now to grant permissions?"; then
+                open -a "DisplayLink Manager"
+                echo "Note: Grant Screen Recording and Accessibility permissions in System Settings > Privacy & Security."
+            fi
+            ;;
+        hrm_note)
+            echo "Note: Launch HRM and grant Accessibility permission in System Settings > Privacy & Security > Accessibility."
+            ;;
+        ollama_setup)
+            if prompt_yes_no "Start Ollama as a background service now?"; then
+                brew services start ollama
+                echo "Ollama service started."
+                if prompt_yes_no "Download a starter model (llama3)?"; then
+                    ollama pull llama3
+                fi
+            else
+                echo "You can start it later with: brew services start ollama"
+            fi
+            ;;
+        qmk_bundle)
+            if ! is_installed formula qmk/qmk/qmk; then
+                brew install qmk/qmk/qmk
+            else
+                echo "QMK CLI is already installed, skipping..."
+            fi
+            if ! is_installed cask qmk-toolbox; then
+                brew install --cask qmk-toolbox
+            else
+                echo "QMK Toolbox is already installed, skipping..."
+            fi
+            qmk setup
+            ;;
+        deskflow_tap)
+            ensure_brew_tap "deskflow/homebrew-tap"
+            ;;
+        hrm_tap)
+            ensure_brew_tap "wontaeyang/hrm"
+            ;;
+    esac
+}
+
+install_entry() {
+    local entry="$1"
+    local key theme_id app_name kind package_name description pre_hook post_hook
+
+    IFS='|' read -r key theme_id app_name kind package_name description pre_hook post_hook <<< "$entry"
+
+    if [ "$kind" = "bundle" ]; then
+        if is_bundle_installed "$key"; then
+            echo "$app_name is already installed, skipping..."
+            return 0
+        fi
+
+        echo ""
+        if prompt_yes_no "Install $app_name? ($description)"; then
+            run_hook "$post_hook"
+        fi
+        return 0
+    fi
+
+    if is_installed "$kind" "$package_name"; then
+        echo "$app_name is already installed, skipping..."
+        return 0
+    fi
+
+    echo ""
+    if ! prompt_yes_no "Install $app_name? ($description)"; then
+        return 0
+    fi
+
+    if [ "$pre_hook" != "none" ]; then
+        run_hook "$pre_hook"
+    fi
+
+    install_package "$kind" "$package_name"
+
+    if [ "$post_hook" != "none" ]; then
+        run_hook "$post_hook"
+    fi
+}
+
+review_theme() {
+    local theme_id="$1"
+    local theme_name="$2"
+    local theme_summary="$3"
+    local entry
+
+    echo ""
+    echo "-------------------------------------------------------------------------"
+    echo "$theme_name"
+    echo "$theme_summary"
+    echo "-------------------------------------------------------------------------"
+
+    for entry in "${APPS[@]}"; do
+        IFS='|' read -r _ entry_theme _ _ _ _ _ _ <<< "$entry"
+        if [ "$entry_theme" = "$theme_id" ]; then
+            install_entry "$entry"
+        fi
+    done
+}
+
+THEMES=(
+    "browsers|Browsers|Web browsers and browser alternatives."
+    "development|Development|Editors, runtimes, and developer-focused tools."
+    "terminal|Terminal Tools|CLI utilities, terminal environments, and shell enhancements."
+    "cloud|Cloud and Sync|Storage, sync, and remote access tools."
+    "security|Security and Privacy|VPN, password, and sandboxing tools."
+    "media|Media and Creative|Audio, video, image, ebook, and media tools."
+    "communication|Communication|Meeting, chat, and collaboration apps."
+    "virtualization|Virtualization and Devices|Virtual machines, device imaging, and hardware helpers."
+    "ai|AI Tools|Local model runtimes and interfaces."
+    "keyboards|Keyboards and Input|Keyboard firmware, remapping, and input utilities."
+    "utilities|Utilities|General desktop utilities and reference tools."
+)
+
+APPS=(
+    "firefox|browsers|Firefox|cask|firefox|web browser|none|none"
+    "chrome|browsers|Google Chrome|cask|google-chrome|web browser|none|none"
+    "ungoogled|browsers|Ungoogled Chromium|cask|ungoogled-chromium|privacy-focused browser|none|none"
+    "vscode|development|Visual Studio Code|cask|visual-studio-code|code editor and IDE|none|none"
+    "node|development|Node.js|formula|node|JavaScript runtime|none|none"
+    "gh|terminal|GitHub CLI|formula|gh|gh command line tool|none|none"
+    "fastfetch|terminal|fastfetch|formula|fastfetch|system information tool|none|none"
+    "byobu|terminal|byobu|formula|byobu|terminal multiplexer|none|none"
+    "htop|terminal|htop|formula|htop|system monitor|none|alias_top_htop"
+    "iterm2|terminal|iTerm2|cask|iterm2|terminal emulator|none|none"
+    "ripgrep|terminal|ripgrep|formula|ripgrep|fast text search tool|none|none"
+    "eza|terminal|eza|formula|eza|modern ls replacement|none|alias_ls_eza"
+    "tldr|terminal|tldr|formula|tldr|simplified command-line documentation|none|none"
+    "dropbox|cloud|Dropbox|cask|dropbox|cloud storage|none|dropbox_dash"
+    "protondrive|cloud|Proton Drive|cask|proton-drive|secure cloud storage|none|none"
+    "zerotier|cloud|ZeroTier One|cask|zerotier-one|network virtualization|none|none"
+    "protonvpn|security|ProtonVPN|cask|protonvpn|VPN service|none|none"
+    "protonpass|security|Proton Pass|cask|proton-pass|password manager|none|none"
+    "container|security|Container|cask|container|app sandboxing|none|none"
+    "spotify|media|Spotify|cask|spotify|music streaming|none|none"
+    "vlc|media|VLC|cask|vlc|media player|none|none"
+    "imagemagick|media|ImageMagick|formula|imagemagick|image manipulation tool|none|none"
+    "pandoc|media|Pandoc|formula|pandoc|document converter|none|none"
+    "gimp|media|GIMP|cask|gimp|image editor|none|none"
+    "audacity|media|Audacity|cask|audacity|audio editor|none|none"
+    "handbrake|media|HandBrake|cask|handbrake|video transcoder|none|none"
+    "calibre|media|Calibre|cask|calibre|ebook manager|none|none"
+    "lastfm|media|Last.fm|cask|lastfm|music scrobbling|ensure_rosetta|none"
+    "bandcampdl|media|bandcamp-dl|formula|bandcamp-dl|Bandcamp music downloader|none|none"
+    "transmission|media|Transmission|cask|transmission|BitTorrent client|none|none"
+    "zoom|communication|Zoom|cask|zoom|video conferencing|none|none"
+    "teams|communication|Microsoft Teams|cask|microsoft-teams|team collaboration|none|none"
+    "whatsapp|communication|WhatsApp|cask|whatsapp|messaging app|none|none"
+    "multipass|virtualization|Multipass|cask|multipass|Ubuntu VM manager|none|none"
+    "utm|virtualization|UTM|cask|utm|virtual machine host|none|none"
+    "macpine|virtualization|macpine|formula|macpine|lightweight Alpine Linux VM|none|none"
+    "rpi|virtualization|Raspberry Pi Imager|cask|raspberry-pi-imager|SD card imaging tool for Raspberry Pi|none|none"
+    "displaylink|virtualization|DisplayLink Manager|cask|displaylink|USB display drivers|none|displaylink_launch"
+    "ollama|ai|Ollama|formula|ollama|local LLM runtime|none|ollama_setup"
+    "lmstudio|ai|LM Studio|cask|lm-studio|local AI model UI|none|lm_studio_launch"
+    "vial|keyboards|Vial|cask|vial|keyboard configuration tool|ensure_rosetta|none"
+    "via|keyboards|VIA|cask|via|keyboard remapping tool|ensure_rosetta|none"
+    "qmk|keyboards|QMK and QMK Toolbox|bundle|qmk-bundle|keyboard firmware development|none|qmk_bundle"
+    "hrm|keyboards|HRM|cask|hrm|home row mods menu bar app|hrm_tap|hrm_note"
+    "deskflow|keyboards|Deskflow|cask|deskflow|keyboard and mouse sharing|deskflow_tap|none"
+    "caffeine|utilities|Caffeine|cask|caffeine|prevent display sleep, menu bar app|none|none"
+    "burn|utilities|Burn|cask|burn|CD and DVD burning application|none|none"
+    "mactracker|utilities|MacTracker|cask|mactracker|Apple device specifications|none|none"
+)
 
 echo "    ========================================================================="
 echo "    ███╗   ███╗ █████╗  ██████╗    ███████╗███████╗████████╗██╗   ██╗██████╗ "
@@ -14,636 +323,33 @@ echo "    ======================================================================
 echo ""
 echo "    Welcome to the Mac Setup Script!"
 echo ""
-echo "    This interactive script will help you set up a new Mac with essential"
-echo "    applications and development tools. It uses Homebrew to manage package"
-echo "    installations and gives you full control over what gets installed."
+echo "    This interactive script helps you set up a new Mac with Homebrew."
+echo "    Software is grouped by theme so you can review related tools together,"
+echo "    such as browsers, terminal tools, media apps, AI tools, or keyboard tooling."
 echo ""
 echo "    What this script does:"
 echo "    • Installs Homebrew (if not already present)"
-echo "    • Offers essential applications (browsers, editors, terminal tools)"
-echo "    • Provides optional applications (creative tools, communication apps)"
-echo "    • Sets up helpful command aliases when requested"
-echo "    • Handles Apple Silicon compatibility requirements"
-echo ""
-echo "    You'll be prompted for each application individually, so you can"
-echo "    pick and choose exactly what you need for your setup."
-echo ""
-echo "    ⚠️  Note: This script is experimental. Use at your own risk!"
+echo "    • Lets you review software by theme"
+echo "    • Prompts for each app individually within the themes you choose"
+echo "    • Reuses existing install hooks for aliases, Rosetta, taps, and services"
+echo "    • Skips packages that are already installed"
 echo ""
 echo "    Press Enter to continue, or Ctrl+C to exit..."
 read -r
 
-
-# Set up Homebrew
-# This is required for installing applications and managing packages on macOS.
-
-if ! command -v brew &> /dev/null; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-# install the apps I use every day
-
-echo "Essential applications - choose which ones to install:"
-
-if ! brew list --cask firefox &>/dev/null; then
-    echo "Install Firefox? (web browser) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask firefox
-    fi
-else
-    echo "Firefox is already installed, skipping..."
-fi
-
-if ! brew list --cask visual-studio-code &>/dev/null; then
-    echo "Install Visual Studio Code? (code editor/IDE) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask visual-studio-code
-    fi
-else
-    echo "Visual Studio Code is already installed, skipping..."
-fi
-
-if ! brew list gh &>/dev/null; then
-    echo "Install GitHub CLI? (gh command line tool) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install gh
-    fi
-else
-    echo "GitHub CLI is already installed, skipping..."
-fi
-
-if ! brew list fastfetch &>/dev/null; then
-    echo "Install fastfetch? (system information tool) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install fastfetch
-    fi
-else
-    echo "fastfetch is already installed, skipping..."
-fi
-
-if ! brew list byobu &>/dev/null; then
-    echo "Install byobu? (terminal multiplexer) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install byobu
-    fi
-else
-    echo "byobu is already installed, skipping..."
-fi
-
-if ! brew list htop &>/dev/null; then
-    echo "Install htop? (system monitor) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install htop
-        # Add alias to make 'top' use htop
-        echo "alias top='htop'" >> ~/.zshrc
-        echo "Alias added: 'top' will now use htop (restart terminal or run 'source ~/.zshrc' to activate)"
-    fi
-else
-    echo "htop is already installed, skipping..."
-fi
-
-if ! brew list imagemagick &>/dev/null; then
-    echo "Install ImageMagick? (image manipulation tool) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install imagemagick
-    fi
-else
-    echo "ImageMagick is already installed, skipping..."
-fi
-
-if ! brew list --cask spotify &>/dev/null; then
-    echo "Install Spotify? (music streaming) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask spotify
-    fi
-else
-    echo "Spotify is already installed, skipping..."
-fi
-
-if ! brew list --cask dropbox &>/dev/null; then
-    echo "Install Dropbox? (cloud storage) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask dropbox
-        echo "Also install Dropbox Dash? (AI-powered search) (y/N)"
-        read -r dash_response
-        if [ "$dash_response" = "y" ] || [ "$dash_response" = "Y" ] || [ "$dash_response" = "yes" ] || [ "$dash_response" = "Yes" ]; then
-            brew install --cask dropbox-dash
-        fi
-    fi
-else
-    echo "Dropbox is already installed, skipping..."
-fi
-
-if ! brew list --cask zerotier-one &>/dev/null; then
-    echo "Install ZeroTier One? (network virtualization) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask zerotier-one
-    fi
-else
-    echo "ZeroTier One is already installed, skipping..."
-fi
-
-if ! brew list --cask vlc &>/dev/null; then
-    echo "Install VLC? (media player) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask vlc
-    fi
-else
-    echo "VLC is already installed, skipping..."
-fi
-
-if ! brew list --cask caffeine &>/dev/null; then
-    echo "Install Caffeine? (prevent display sleep, menu bar app) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask caffeine
-    fi
-else
-    echo "Caffeine is already installed, skipping..."
-fi
-
-if ! brew list --cask proton-drive &>/dev/null; then
-    echo "Install Proton Drive? (secure cloud storage) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask proton-drive
-    fi
-else
-    echo "Proton Drive is already installed, skipping..."
-fi
-
-if ! brew list --cask protonvpn &>/dev/null; then
-    echo "Install ProtonVPN? (VPN service) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask protonvpn
-    fi
-else
-    echo "ProtonVPN is already installed, skipping..."
-fi
-
-if ! brew list --cask proton-pass &>/dev/null; then
-    echo "Install Proton Pass? (password manager) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask proton-pass
-    fi
-else
-    echo "Proton Pass is already installed, skipping..."
-fi
-
-if ! brew list pandoc &>/dev/null; then
-    echo "Install Pandoc? (document converter) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install pandoc
-    fi
-else
-    echo "Pandoc is already installed, skipping..."
-fi
-
-if ! brew list eza &>/dev/null; then
-    echo "Install eza? (modern ls replacement) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install eza
-        echo "Would you like to alias 'ls' to 'eza -l'? (y/N)"
-        read -r alias_response
-        if [ "$alias_response" = "y" ] || [ "$alias_response" = "Y" ] || [ "$alias_response" = "yes" ] || [ "$alias_response" = "Yes" ]; then
-            echo "alias ls='eza -l'" >> ~/.zshrc
-            echo "Alias added: 'ls' will now use 'eza -l' (restart terminal or run 'source ~/.zshrc' to activate)"
-        fi
-    fi
-else
-    echo "eza is already installed, skipping..."
-fi
-
-# Ask if user wants to continue with optional apps
+ensure_homebrew
 
 echo ""
-echo "Would you like to install any optional applications?"
-echo "Available options include: GIMP, Audacity, HandBrake,"
-echo "Calibre, Zoom, Microsoft Teams, Ungoogled Chromium, Google Chrome, MacTracker,"
-echo "Vial, VIA, QMK tools, Last.fm, Ollama, LM Studio, DisplayLink, and more..."
+echo "Choose which themes you want to review."
+echo "If you skip a theme, none of its apps will be prompted."
+
+for theme in "${THEMES[@]}"; do
+    IFS='|' read -r theme_id theme_name theme_summary <<< "$theme"
+    echo ""
+    if prompt_yes_no "Review $theme_name?"; then
+        review_theme "$theme_id" "$theme_name" "$theme_summary"
+    fi
+done
+
 echo ""
-echo "Continue with optional applications? (y/N)"
-read -r continue_response
-
-if [ "$continue_response" = "y" ] || [ "$continue_response" = "Y" ] || [ "$continue_response" = "yes" ] || [ "$continue_response" = "Yes" ]; then
-    # install the apps I use occasionally
-    echo "Optional applications - choose which ones to install:"
-
-else
-    echo "Skipping optional applications. Setup complete!"
-    exit 0
-fi
-
-if ! brew list --cask iterm2 &>/dev/null; then
-    echo "Install iTerm2? (terminal emulator) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask iterm2
-    fi
-else
-    echo "iTerm2 is already installed, skipping..."
-fi
-
-if ! brew list --cask multipass &>/dev/null; then
-    echo "Install Multipass? (Ubuntu VM manager) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask multipass
-    fi
-else
-    echo "Multipass is already installed, skipping..."
-fi
-
-if ! brew list --cask utm &>/dev/null; then
-    echo "Install UTM? (virtual machine host) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask utm
-    fi
-else
-    echo "UTM is already installed, skipping..."
-fi
-
-if ! brew list --cask burn &>/dev/null; then
-    echo "Install Burn? (CD/DVD burning application) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask burn
-    fi
-else
-    echo "Burn is already installed, skipping..."
-fi
-
-if ! brew list ripgrep &>/dev/null; then
-    echo "Install ripgrep? (fast text search tool) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install ripgrep
-    fi
-else
-    echo "ripgrep is already installed, skipping..."
-fi
-
-# install the apps I use occasionally
-
-echo "Optional applications - choose which ones to install:"
-
-if ! brew list --cask gimp &>/dev/null; then
-    echo "Install GIMP? (image editor) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask gimp
-    fi
-else
-    echo "GIMP is already installed, skipping..."
-fi
-
-
-
-if ! brew list --cask audacity &>/dev/null; then
-    echo "Install Audacity? (audio editor) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask audacity
-    fi
-else
-    echo "Audacity is already installed, skipping..."
-fi
-
-if ! brew list --cask handbrake &>/dev/null; then
-    echo "Install HandBrake? (video transcoder) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask handbrake
-    fi
-else
-    echo "HandBrake is already installed, skipping..."
-fi
-
-if ! brew list --cask calibre &>/dev/null; then
-    echo "Install Calibre? (ebook manager) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask calibre
-    fi
-else
-    echo "Calibre is already installed, skipping..."
-fi
-
-
-if ! brew list --cask google-chrome &>/dev/null; then
-    echo "Install Google Chrome? (web browser) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask google-chrome
-    fi
-else
-    echo "Google Chrome is already installed, skipping..."
-fi
-
-if ! brew list --cask zoom &>/dev/null; then
-    echo "Install Zoom? (video conferencing) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask zoom
-    fi
-else
-    echo "Zoom is already installed, skipping..."
-fi
-
-if ! brew list --cask microsoft-teams &>/dev/null; then
-    echo "Install Microsoft Teams? (team collaboration) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask microsoft-teams
-    fi
-else
-    echo "Microsoft Teams is already installed, skipping..."
-fi
-
-if ! brew list --cask whatsapp &>/dev/null; then
-    echo "Install WhatsApp? (messaging app) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask whatsapp
-    fi
-else
-    echo "WhatsApp is already installed, skipping..."
-fi
-
-if ! brew list --cask ungoogled-chromium &>/dev/null; then
-    echo "Install Ungoogled Chromium? (privacy-focused browser) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask ungoogled-chromium
-    fi
-else
-    echo "Ungoogled Chromium is already installed, skipping..."
-fi
-
-if ! brew list --cask mactracker &>/dev/null; then
-    echo "Install MacTracker? (Apple device specifications) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask mactracker
-    fi
-else
-    echo "MacTracker is already installed, skipping..."
-fi
-
-if ! brew list --cask vial &>/dev/null; then
-    echo "Install Vial? (keyboard configuration tool) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        # Check if we're on Apple Silicon and install Rosetta if needed
-        if [[ $(uname -m) == "arm64" ]]; then
-            echo "Apple Silicon detected. Checking for Rosetta..."
-            if ! /usr/bin/pgrep -q oahd; then
-                echo "Installing Rosetta 2 (required for Vial on Apple Silicon)..."
-                /usr/sbin/softwareupdate --install-rosetta --agree-to-license
-            else
-                echo "Rosetta 2 is already installed."
-            fi
-        fi
-        brew install --cask vial
-    fi
-else
-    echo "Vial is already installed, skipping..."
-fi
-
-if ! brew list --cask via &>/dev/null; then
-    echo "Install VIA? (keyboard remapping tool) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        # Check if we're on Apple Silicon and install Rosetta if needed
-        if [[ $(uname -m) == "arm64" ]]; then
-            echo "Apple Silicon detected. Checking for Rosetta..."
-            if ! /usr/bin/pgrep -q oahd; then
-                echo "Installing Rosetta 2 (required for VIA on Apple Silicon)..."
-                /usr/sbin/softwareupdate --install-rosetta --agree-to-license
-            else
-                echo "Rosetta 2 is already installed."
-            fi
-        fi
-        brew install --cask via
-    fi
-else
-    echo "VIA is already installed, skipping..."
-fi
-
-if ! brew list qmk/qmk/qmk &>/dev/null || ! brew list --cask qmk-toolbox &>/dev/null; then
-    echo "Install and set up QMK and QMK Toolbox? (keyboard firmware development) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        if ! brew list qmk/qmk/qmk &>/dev/null; then
-            brew install qmk/qmk/qmk
-        else
-            echo "QMK CLI is already installed..."
-        fi
-        if ! brew list --cask qmk-toolbox &>/dev/null; then
-            brew install --cask qmk-toolbox
-        else
-            echo "QMK Toolbox is already installed..."
-        fi
-        qmk setup
-    fi
-else
-    echo "QMK and QMK Toolbox are already installed, skipping..."
-fi
-
-if ! brew list --cask lastfm &>/dev/null; then
-    echo "Install Last.fm? (music scrobbling) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        # Check if we're on Apple Silicon and install Rosetta if needed
-        if [[ $(uname -m) == "arm64" ]]; then
-            echo "Apple Silicon detected. Checking for Rosetta..."
-            if ! /usr/bin/pgrep -q oahd; then
-                echo "Installing Rosetta 2 (required for Last.fm on Apple Silicon)..."
-                /usr/sbin/softwareupdate --install-rosetta --agree-to-license
-            else
-                echo "Rosetta 2 is already installed."
-            fi
-        fi
-        brew install --cask lastfm
-    fi
-else
-    echo "Last.fm is already installed, skipping..."
-fi
-
-if ! brew list --cask deskflow &>/dev/null; then
-    echo "Install Deskflow? (keyboard/mouse sharing) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        # Check if the deskflow tap is already added
-        if ! brew tap | grep -q "deskflow/homebrew-tap"; then
-            echo "Adding Deskflow tap..."
-            brew tap deskflow/homebrew-tap
-        fi
-        brew install --cask deskflow
-    fi
-else
-    echo "Deskflow is already installed, skipping..."
-fi
-
-# Ollama (local LLM runtime)
-if ! brew list ollama &>/dev/null; then
-    echo "Install Ollama? (local LLM runtime) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install ollama
-        echo "Start Ollama as a background service now? (y/N)"
-        read -r svc
-        if [ "$svc" = "y" ] || [ "$svc" = "Y" ] || [ "$svc" = "yes" ] || [ "$svc" = "Yes" ]; then
-            brew services start ollama
-            echo "Ollama service started."
-            echo "Download a starter model (llama3)? (y/N)"
-            read -r model_response
-            if [ "$model_response" = "y" ] || [ "$model_response" = "Y" ] || [ "$model_response" = "yes" ] || [ "$model_response" = "Yes" ]; then
-                ollama pull llama3
-            fi
-        else
-            echo "You can start it later with: brew services start ollama"
-        fi
-    fi
-else
-    echo "Ollama is already installed, skipping..."
-fi
-
-# LM Studio (local model UI)
-if ! brew list --cask lm-studio &>/dev/null; then
-    echo "Install LM Studio? (local AI model UI) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask lm-studio
-        echo "Launch LM Studio now? (y/N)"
-        read -r launch
-        if [ "$launch" = "y" ] || [ "$launch" = "Y" ] || [ "$launch" = "yes" ] || [ "$launch" = "Yes" ]; then
-            open -a "LM Studio"
-        fi
-    fi
-else
-    echo "LM Studio is already installed, skipping..."
-fi
-
-# HRM (Home Row Mods for macOS)
-if ! brew list --cask hrm &>/dev/null; then
-    echo "Install HRM? (home row mods menu bar app) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew tap wontaeyang/hrm
-        brew install --cask hrm
-        echo "Note: Launch HRM and grant Accessibility permission in System Settings > Privacy & Security > Accessibility."
-    fi
-else
-    echo "HRM is already installed, skipping..."
-fi
-
-# DisplayLink Manager (USB display drivers)
-if ! brew list --cask displaylink &>/dev/null; then
-    echo "Install DisplayLink Manager? (USB display drivers) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask displaylink
-        echo "Launch DisplayLink Manager now to grant permissions? (y/N)"
-        read -r launch
-        if [ "$launch" = "y" ] || [ "$launch" = "Y" ] || [ "$launch" = "yes" ] || [ "$launch" = "Yes" ]; then
-            open -a "DisplayLink Manager"
-            echo "Note: Grant Screen Recording and Accessibility permissions in System Settings > Privacy & Security."
-        fi
-    fi
-else
-    echo "DisplayLink Manager is already installed, skipping..."
-fi
-
-# bandcamp-dl (Bandcamp downloader)
-if ! brew list bandcamp-dl &>/dev/null; then
-    echo "Install bandcamp-dl? (Bandcamp music downloader) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install bandcamp-dl
-    fi
-else
-    echo "bandcamp-dl is already installed, skipping..."
-fi
-
-# Container (sandboxed app environments)
-if ! brew list --cask container &>/dev/null; then
-    echo "Install Container? (app sandboxing) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask container
-    fi
-else
-    echo "Container is already installed, skipping..."
-fi
-
-# macpine (lightweight Alpine Linux VM)
-if ! brew list macpine &>/dev/null; then
-    echo "Install macpine? (lightweight Alpine Linux VM) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install macpine
-    fi
-else
-    echo "macpine is already installed, skipping..."
-fi
-
-# tldr (community-driven man page alternatives)
-if ! brew list tldr &>/dev/null; then
-    echo "Install tldr? (simplified command-line documentation) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install tldr
-    fi
-else
-    echo "tldr is already installed, skipping..."
-fi
-
-# Node.js (JavaScript runtime)
-if ! brew list node &>/dev/null; then
-    echo "Install Node.js? (JavaScript runtime) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install node
-    fi
-else
-    echo "Node.js is already installed, skipping..."
-fi
-
-# Raspberry Pi Imager (SD card imaging tool)
-if ! brew list --cask raspberry-pi-imager &>/dev/null; then
-    echo "Install Raspberry Pi Imager? (SD card imaging tool for Raspberry Pi) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask raspberry-pi-imager
-    fi
-else
-    echo "Raspberry Pi Imager is already installed, skipping..."
-fi
-
-# Transmission (BitTorrent client)
-if ! brew list --cask transmission &>/dev/null; then
-    echo "Install Transmission? (BitTorrent client) (y/N)"
-    read -r response
-    if [ "$response" = "y" ] || [ "$response" = "Y" ] || [ "$response" = "yes" ] || [ "$response" = "Yes" ]; then
-        brew install --cask transmission
-    fi
-else
-    echo "Transmission is already installed, skipping..."
-fi
+echo "Setup complete!"
