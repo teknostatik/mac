@@ -25,18 +25,21 @@ Comprehensive installation and configuration scripts for macOS systems. This col
 #### `setup`
 Interactive setup script for a fresh macOS installation using Homebrew. Features include:
 - **Homebrew Installation**: Automatically installs Homebrew if not present
-- **Interactive Installation**: Prompts for each application individually, giving you full control
-- **Essential Applications**: 
-  - Browsers (Firefox, Safari alternatives)
-  - Code editors (Visual Studio Code, Neovim, Emacs)
-  - Terminal tools (GitHub CLI, fastfetch, htop, byobu)
-- **Optional Applications**:
-  - Creative tools (GIMP, Inkscape, Blender, Audacity)
-  - Communication (Slack, Discord, Zoom)
-  - Development tools (Docker, various programming languages)
-  - Productivity apps
-- **Apple Silicon Support**: Handles architecture-specific requirements automatically
-- **Alias Configuration**: Optionally sets up helpful command aliases
+- **Theme-Based Selection**: Software is grouped by what it does, so you review related tools together and can skip entire categories you don't need
+  - **Browsers**: Firefox, Google Chrome, Ungoogled Chromium
+  - **Development**: Visual Studio Code, Node.js
+  - **Terminal Tools**: GitHub CLI, fastfetch, byobu, htop, iTerm2, ripgrep, eza, tldr
+  - **Cloud and Sync**: Dropbox (with optional Dropbox Dash), Proton Drive, ZeroTier One
+  - **Security and Privacy**: ProtonVPN, Proton Pass, Container
+  - **Media and Creative**: Spotify, VLC, ImageMagick, Pandoc, GIMP, Audacity, HandBrake, Calibre, Last.fm, bandcamp-dl, Transmission
+  - **Communication**: Zoom, Microsoft Teams, WhatsApp
+  - **Virtualization and Devices**: Multipass, UTM, macpine, Raspberry Pi Imager, DisplayLink Manager
+  - **AI Tools**: Ollama (with optional service startup and model download), LM Studio
+  - **Keyboards and Input**: Vial, VIA, QMK and QMK Toolbox, HRM, Deskflow
+  - **Utilities**: Caffeine, Burn, MacTracker
+- **Apple Silicon Support**: Handles Rosetta 2 automatically for apps that require it
+- **Alias Configuration**: Optionally sets up helpful command aliases (e.g. `top` → `htop`, `ls` → `eza -l`)
+- **Idempotent**: Already-installed packages are skipped; re-running is safe
 
 Run with: `./setup`
 
