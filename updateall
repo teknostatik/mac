@@ -11,7 +11,16 @@
 # qmk_firmware when Dropbox is present, and updating Nix packages when Nix
 # is installed.
 
+# macOS updates
+
 sudo softwareupdate -i -a
+
+# App store updates
+
+mas upgrade
+
+#Homebrew updates
+
 brew update
 brew upgrade
 
