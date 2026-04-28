@@ -308,6 +308,7 @@ APPS=(
     "hrm|keyboards|HRM|cask|hrm|home row mods menu bar app|hrm_tap|hrm_note"
     "deskflow|utilities|Deskflow|cask|deskflow|keyboard and mouse sharing|deskflow_tap|none"
     "caffeine|utilities|Caffeine|cask|caffeine|prevent display sleep, menu bar app|none|none"
+    "muzzle|utilities|Muzzle|cask|muzzle|automatically mutes notifications while sharing your screen|none|none"
     "burn|utilities|Burn|cask|burn|CD and DVD burning application|none|none"
     "mactracker|utilities|MacTracker|cask|mactracker|Apple device specifications|none|none"
 )
