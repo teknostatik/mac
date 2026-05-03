@@ -110,6 +110,9 @@ is_bundle_installed() {
         qmk)
             is_installed formula qmk/qmk/qmk && is_installed cask qmk-toolbox
             ;;
+        unixbench)
+            [ -d "$HOME/byte-unixbench" ]
+            ;;
         *)
             return 1
             ;;
@@ -183,6 +186,19 @@ run_hook() {
             ;;
         hrm_tap)
             ensure_brew_tap "wontaeyang/hrm"
+            ;;
+        unixbench_install)
+            local target="$HOME/byte-unixbench"
+            if [ ! -d "$target" ]; then
+                git clone https://github.com/kdlucas/byte-unixbench.git "$target"
+            fi
+            echo "Building UnixBench..."
+            make -C "$target/UnixBench"
+            echo "UnixBench installed at $target/UnixBench"
+            echo "To run later: cd $target/UnixBench && ./Run"
+            if prompt_yes_no "Run UnixBench now? (takes several minutes)"; then
+                "$target/UnixBench/Run"
+            fi
             ;;
     esac
 }
@@ -269,6 +285,7 @@ APPS=(
     "node|development|Node.js|formula|node|JavaScript runtime|none|none"
     "gh|terminal|GitHub CLI|formula|gh|gh command line tool|none|none"
     "fastfetch|terminal|fastfetch|formula|fastfetch|system information tool|none|none"
+    "unixbench|terminal|UnixBench|bundle|unixbench-bundle|CPU and system performance benchmark|none|unixbench_install"
     "byobu|terminal|byobu|formula|byobu|terminal multiplexer|none|none"
     "htop|terminal|htop|formula|htop|system monitor|none|alias_top_htop"
     "iterm2|terminal|iTerm2|cask|iterm2|terminal emulator|none|none"
