@@ -192,6 +192,8 @@ run_hook() {
             if [ ! -d "$target" ]; then
                 git clone https://github.com/kdlucas/byte-unixbench.git "$target"
             fi
+            # clang does not support the GNU assembler -q flag; strip it on macOS
+            sed -i '' 's/-Wa,-q//g' "$target/UnixBench/Makefile"
             echo "Building UnixBench..."
             make -C "$target/UnixBench"
             echo "UnixBench installed at $target/UnixBench"
