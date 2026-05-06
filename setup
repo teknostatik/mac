@@ -320,6 +320,8 @@ APPS=(
     "rpi|utilities|Raspberry Pi Imager|cask|raspberry-pi-imager|SD card imaging tool for Raspberry Pi|none|none"
     "displaylink|utilities|DisplayLink Manager|cask|displaylink|USB display drivers|none|displaylink_launch"
     "ollama|ai|Ollama|formula|ollama|local LLM runtime|none|ollama_setup"
+    "claude|ai|Claude|cask|claude|Anthropic AI assistant|none|none"
+    "claudecode|ai|Claude Code|cask|claude-code|Anthropic coding assistant|none|none"
     "lmstudio|ai|LM Studio|cask|lm-studio|local AI model UI|none|lm_studio_launch"
     "vial|keyboards|Vial|cask|vial|keyboard configuration tool|ensure_rosetta|none"
     "via|keyboards|VIA|cask|via|keyboard remapping tool|ensure_rosetta|none"
