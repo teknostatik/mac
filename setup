@@ -323,6 +323,7 @@ APPS=(
     "claude|ai|Claude|cask|claude|Anthropic AI assistant|none|none"
     "claudecode|ai|Claude Code|cask|claude-code|Anthropic coding assistant|none|none"
     "lmstudio|ai|LM Studio|cask|lm-studio|local AI model UI|none|lm_studio_launch"
+    "osaurus|ai|Osaurus|cask|osaurus|AI assistant app|none|none"
     "vial|keyboards|Vial|cask|vial|keyboard configuration tool|ensure_rosetta|none"
     "via|keyboards|VIA|cask|via|keyboard remapping tool|ensure_rosetta|none"
     "qmk|keyboards|QMK and QMK Toolbox|bundle|qmk-bundle|keyboard firmware development|none|qmk_bundle"
