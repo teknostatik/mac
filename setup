@@ -72,6 +72,34 @@ ensure_homebrew() {
     fi
 }
 
+install_updateall_macos_script() {
+    local source_url temp_script target_dir target_script
+
+    source_url="https://raw.githubusercontent.com/teknostatik/updateall/refs/heads/main/updateall_macos"
+    temp_script="$(mktemp)"
+    target_dir="/usr/local/bin"
+    target_script="$target_dir/updateall_macos"
+
+    echo "Downloading updateall_macos from GitHub..."
+    if ! curl -fsSL "$source_url" -o "$temp_script"; then
+        echo "Failed to download update script from: $source_url"
+        echo "Skipping updateall_macos installation."
+        rm -f "$temp_script"
+        return 1
+    fi
+
+    echo "Installing updateall_macos to $target_script"
+    if sudo mkdir -p "$target_dir" && sudo install -m 755 "$temp_script" "$target_script"; then
+        echo "Installed: $target_script"
+    else
+        echo "Failed to install updateall_macos."
+        rm -f "$temp_script"
+        return 1
+    fi
+
+    rm -f "$temp_script"
+}
+
 is_installed() {
     local kind="$1"
     local package_name="$2"
@@ -373,6 +401,15 @@ for theme in "${THEMES[@]}"; do
         review_theme "$theme_id" "$theme_name" "$theme_summary"
     fi
 done
+
+echo ""
+echo "-------------------------------------------------------------------------"
+echo "Optional Update Script"
+echo "Download and install updateall_macos from GitHub."
+echo "-------------------------------------------------------------------------"
+if prompt_yes_no "Install updateall_macos to /usr/local/bin?"; then
+    install_updateall_macos_script
+fi
 
 echo ""
 echo "Setup complete!"
