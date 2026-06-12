@@ -58,6 +58,9 @@ ensure_brew_tap() {
         echo "Adding Homebrew tap: $tap_name"
         brew tap "$tap_name"
     fi
+    # Homebrew 5.2/6.0 requires explicit trust for non-official taps.
+    # Trust is idempotent, so safe to run even if the tap was already present.
+    brew trust "$tap_name" 2>/dev/null || true
 }
 
 ensure_homebrew() {
