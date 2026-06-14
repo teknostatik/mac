@@ -354,6 +354,7 @@ APPS=(
     "claude|ai|Claude|cask|claude|Anthropic AI assistant|none|none"
     "claudecode|ai|Claude Code|cask|claude-code|Anthropic coding assistant|none|none"
     "lmstudio|ai|LM Studio|cask|lm-studio|local AI model UI|none|lm_studio_launch"
+    "llamacpp|ai|llama.cpp|formula|llama.cpp|local inference runtime and CLI|none|none"
     "osaurus|ai|Osaurus|cask|osaurus|AI assistant app|none|none"
     "vial|keyboards|Vial|cask|vial|keyboard configuration tool|ensure_rosetta|none"
     "via|keyboards|VIA|cask|via|keyboard remapping tool|ensure_rosetta|none"
