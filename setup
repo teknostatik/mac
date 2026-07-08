@@ -103,6 +103,29 @@ install_updateall_macos_script() {
     rm -f "$temp_script"
 }
 
+configure_git() {
+    local fullname email
+
+    echo "We are now going to configure git"
+    echo ""
+    echo "Current global git identity:"
+    echo "Name: $(git config --global --get user.name 2>/dev/null || echo "<not set>")"
+    echo "Email: $(git config --global --get user.email 2>/dev/null || echo "<not set>")"
+    echo ""
+
+    echo "Enter your full name:"
+    read -r fullname
+    echo "Enter your email address:"
+    read -r email
+
+    git config --global user.name "$fullname"
+    git config --global user.email "$email"
+
+    echo "Git has been configured with the following details:"
+    git config --global --get user.name
+    git config --global --get user.email
+}
+
 is_installed() {
     local kind="$1"
     local package_name="$2"
@@ -419,6 +442,15 @@ echo "Download and install updateall_macos from GitHub."
 echo "-------------------------------------------------------------------------"
 if prompt_yes_no "Install updateall_macos to /usr/local/bin?"; then
     install_updateall_macos_script
+fi
+
+echo ""
+echo "-------------------------------------------------------------------------"
+echo "Optional Git Configuration"
+echo "Set your global git user.name and user.email."
+echo "-------------------------------------------------------------------------"
+if prompt_yes_no "Configure global git name and email now?"; then
+    configure_git
 fi
 
 echo ""
