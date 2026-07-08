@@ -352,6 +352,7 @@ APPS=(
     "utm|virtualization|UTM|cask|utm|virtual machine host|none|none"
     "macpine|virtualization|macpine|formula|macpine|lightweight Alpine Linux VM|none|none"
     "rpi|utilities|Raspberry Pi Imager|cask|raspberry-pi-imager|SD card imaging tool for Raspberry Pi|none|none"
+    "mas|utilities|mas|formula|mas|Mac App Store command-line interface|none|none"
     "displaylink|utilities|DisplayLink Manager|cask|displaylink|USB display drivers|none|displaylink_launch"
     "ollama|ai|Ollama|formula|ollama|local LLM runtime|none|ollama_setup"
     "claude|ai|Claude|cask|claude|Anthropic AI assistant|none|none"
