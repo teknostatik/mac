@@ -362,6 +362,7 @@ APPS=(
     "imagemagick|media|ImageMagick|formula|imagemagick|image manipulation tool|none|none"
     "pandoc|utilities|Pandoc|formula|pandoc|document converter|none|none"
     "geekbench|utilities|Geekbench|cask|geekbench|CPU and GPU benchmark tool|none|none"
+    "geekbenchai|utilities|Geekbench AI|cask|geekbench-ai|AI benchmark tool|none|none"
     "gimp|media|GIMP|cask|gimp|image editor|none|none"
     "audacity|media|Audacity|cask|audacity|audio editor|none|none"
     "handbrake|media|HandBrake|cask|handbrake|video transcoder|none|none"
