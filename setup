@@ -396,6 +396,7 @@ APPS=(
     "muzzle|utilities|Muzzle|cask|muzzle|automatically mutes notifications while sharing your screen|none|none"
     "burn|utilities|Burn|cask|burn|CD and DVD burning application|none|none"
     "mactracker|utilities|MacTracker|cask|mactracker|Apple device specifications|none|none"
+    "voodoopad|utilities|VoodooPad|cask|voodoopad|personal wiki and note-taking app|none|none"
 )
 
 echo "    ========================================================================="
