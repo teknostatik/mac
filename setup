@@ -385,6 +385,7 @@ APPS=(
     "claude|ai|Claude|cask|claude|Anthropic AI assistant|none|none"
     "claudecode|ai|Claude Code|cask|claude-code|Anthropic coding assistant|none|none"
     "lmstudio|ai|LM Studio|cask|lm-studio|local AI model UI|none|lm_studio_launch"
+    "lmstudiobionic|ai|LM Studio Bionic|cask|lm-studio-bionic|LM Studio variant for Bionic|none|none"
     "opencode|ai|OpenCode|formula|anomalyco/tap/opencode|AI coding assistant CLI|opencode_tap|none"
     "llamacpp|ai|llama.cpp|formula|llama.cpp|local inference runtime and CLI|none|none"
     "osaurus|ai|Osaurus|cask|osaurus|AI assistant app|none|none"
