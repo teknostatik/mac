@@ -37,6 +37,31 @@ append_alias_once() {
     fi
 }
 
+add_linux_terminal_colorization() {
+    local shell_rc="$HOME/.zshrc"
+    local config_block
+
+    config_block=$(cat <<'EOF'
+#colorization mimicking linux
+PS1="%{%F{033}%}%n%{%f%}@%{%F{green}%}%m:%{%F{yellow}%}%~%{$%f%}%  "
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+export EDITOR=/usr/bin/nano
+export VISUAL=/usr/bin/nano
+EOF
+)
+
+    touch "$shell_rc"
+    if grep -Fqx "#colorization mimicking linux" "$shell_rc"; then
+        echo "Linux-style terminal coloring is already configured in ~/.zshrc, skipping..."
+        return 0
+    fi
+
+    printf '\n%s\n' "$config_block" >> "$shell_rc"
+    echo "Linux-style terminal colorization added to ~/.zshrc."
+    echo "Restart your terminal or run 'source ~/.zshrc' to activate it."
+}
+
 ensure_rosetta() {
     if [ "$(uname -m)" != "arm64" ]; then
         return 0
@@ -448,6 +473,15 @@ echo "Download and install updateall_macos from GitHub."
 echo "-------------------------------------------------------------------------"
 if prompt_yes_no "Install updateall_macos to /usr/local/bin?"; then
     install_updateall_macos_script
+fi
+
+echo ""
+echo "-------------------------------------------------------------------------"
+echo "Optional Terminal Colorization"
+echo "Add Linux-style colors to the default macOS terminal prompt."
+echo "-------------------------------------------------------------------------"
+if prompt_yes_no "Add Linux-style terminal coloring to your default Mac terminal?"; then
+    add_linux_terminal_colorization
 fi
 
 echo ""
