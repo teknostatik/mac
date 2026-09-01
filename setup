@@ -59,7 +59,12 @@ EOF
 
     printf '\n%s\n' "$config_block" >> "$shell_rc"
     echo "Linux-style terminal colorization added to ~/.zshrc."
-    echo "Restart your terminal or run 'source ~/.zshrc' to activate it."
+    if prompt_yes_no "Reload ~/.zshrc now?"; then
+        source "$shell_rc"
+        echo "Reloaded ~/.zshrc."
+    else
+        echo "Restart your terminal or run 'source ~/.zshrc' to activate it."
+    fi
 }
 
 ensure_rosetta() {
