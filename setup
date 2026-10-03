@@ -413,6 +413,7 @@ APPS=(
     "mas|utilities|mas|formula|mas|Mac App Store command-line interface|none|none"
     "displaylink|utilities|DisplayLink Manager|cask|displaylink|USB display drivers|none|displaylink_launch"
     "ollama|ai|Ollama|formula|ollama|local LLM runtime|none|ollama_setup"
+    "anythingllm|ai|AnythingLLM|cask|anythingllm|AI workspace for documents and local models|none|none"
     "claude|ai|Claude|cask|claude|Anthropic AI assistant|none|none"
     "claudecode|ai|Claude Code|cask|claude-code|Anthropic coding assistant|none|none"
     "lmstudio|ai|LM Studio|cask|lm-studio|local AI model UI|none|lm_studio_launch"

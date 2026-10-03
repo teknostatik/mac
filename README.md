@@ -34,7 +34,7 @@ Interactive setup script for a fresh macOS installation using Homebrew. Features
   - **Media and Creative**: Spotify, VLC, ImageMagick, Pandoc, GIMP, Audacity, HandBrake, Calibre, Last.fm, bandcamp-dl, Transmission
   - **Communication**: Zoom, Microsoft Teams, WhatsApp
   - **Virtualization and Devices**: Multipass, UTM, macpine, Raspberry Pi Imager, DisplayLink Manager
-  - **AI Tools**: Ollama (with optional service startup and model download), LM Studio
+  - **AI Tools**: Ollama (with optional service startup and model download), AnythingLLM, LM Studio
   - **Keyboards and Input**: Vial, VIA, QMK and QMK Toolbox, HRM, Deskflow
   - **Utilities**: Caffeine, Burn, MacTracker
 - **Apple Silicon Support**: Handles Rosetta 2 automatically for apps that require it
