@@ -274,6 +274,9 @@ run_hook() {
         opencode_tap)
             ensure_brew_tap "anomalyco/tap"
             ;;
+        removemacai_tap)
+            ensure_brew_tap "omlahore/tap"
+            ;;
         unixbench_install)
             local target="$HOME/byte-unixbench"
             if [ ! -d "$target" ]; then
@@ -411,6 +414,7 @@ APPS=(
     "macpine|virtualization|macpine|formula|macpine|lightweight Alpine Linux VM|none|none"
     "rpi|utilities|Raspberry Pi Imager|cask|raspberry-pi-imager|SD card imaging tool for Raspberry Pi|none|none"
     "mas|utilities|mas|formula|mas|Mac App Store command-line interface|none|none"
+    "removemacai|utilities|RemoveMacAI|formula|omlahore/tap/removemacai|turn off Apple Intelligence and remove its models|removemacai_tap|none"
     "displaylink|utilities|DisplayLink Manager|cask|displaylink|USB display drivers|none|displaylink_launch"
     "ollama|ai|Ollama|formula|ollama|local LLM runtime|none|ollama_setup"
     "anythingllm|ai|AnythingLLM|cask|anythingllm|AI workspace for documents and local models|none|none"
