@@ -266,7 +266,7 @@ run_hook() {
             qmk setup
             ;;
         deskflow_tap)
-            ensure_brew_tap "deskflow/homebrew-tap"
+            ensure_brew_tap "deskflow/tap"
             ;;
         hrm_tap)
             ensure_brew_tap "wontaeyang/hrm"
@@ -392,7 +392,7 @@ APPS=(
     "vlc|media|VLC|cask|vlc|media player|none|none"
     "imagemagick|media|ImageMagick|formula|imagemagick|image manipulation tool|none|none"
     "pandoc|utilities|Pandoc|formula|pandoc|document converter|none|none"
-    "homebrewapp|utilities|Homebrew App|formula|homebrew-app|utility app for managing Homebrew packages|none|none"
+    "homebrewapp|utilities|Homebrew App|cask|homebrew-app|utility app for managing Homebrew packages|none|none"
     "geekbench|utilities|Geekbench|cask|geekbench|CPU and GPU benchmark tool|none|none"
     "geekbenchai|utilities|Geekbench AI|cask|geekbench-ai|AI benchmark tool|none|none"
     "gimp|media|GIMP|cask|gimp|image editor|none|none"
