@@ -54,7 +54,7 @@ Run from this directory:
 
 Runs macOS software updates, upgrades Mac App Store apps with `mas`, and updates and upgrades Homebrew packages. If Nix is installed, it updates Nix channels and packages and collects garbage.
 
-This script makes system-wide changes, invokes `sudo`, and assumes `mas` and Homebrew are installed. 
+This script makes system-wide changes and invokes `sudo`. It assumes Homebrew is installed and installs `mas` with Homebrew when the `mas` command is missing.
 
 Run from this directory:
 
@@ -67,7 +67,7 @@ Run from this directory:
 - macOS and an internet connection
 - Administrator access for software updates and selected setup steps
 - Homebrew for `updateall`; `setup` installs it if missing
-- `mas` for Mac App Store updates
+- Homebrew for installing `mas` when needed for Mac App Store updates
 - Nix is optional for corresponding `updateall` steps
 
 ## License

@@ -16,7 +16,16 @@ sudo softwareupdate -i -a
 
 # App store updates
 
-mas upgrade
+if ! command -v mas >/dev/null 2>&1; then
+	echo "mas not found; installing it with Homebrew."
+	brew install mas
+fi
+
+if command -v mas >/dev/null 2>&1; then
+	mas upgrade
+else
+	echo "mas is unavailable; skipping Mac App Store updates."
+fi
 
 # Homebrew updates
 
