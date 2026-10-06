@@ -52,9 +52,9 @@ Run from this directory:
 
 ### `updateall`
 
-Runs macOS software updates, upgrades Mac App Store apps with `mas`, and updates and upgrades Homebrew packages. If Dropbox is detected, it syncs keyboard keymaps from `/Users/andy/Dropbox/Scripts/github/keyboards` into `/Users/andy/qmk_firmware`. If Nix is installed, it updates Nix channels and packages and collects garbage.
+Runs macOS software updates, upgrades Mac App Store apps with `mas`, and updates and upgrades Homebrew packages. If Nix is installed, it updates Nix channels and packages and collects garbage.
 
-This script makes system-wide changes, invokes `sudo`, and assumes `mas` and Homebrew are installed. QMK syncing requires the expected Dropbox source files and local QMK checkout; the script uses fixed `/Users/andy/...` paths.
+This script makes system-wide changes, invokes `sudo`, and assumes `mas` and Homebrew are installed. 
 
 Run from this directory:
 
@@ -68,7 +68,7 @@ Run from this directory:
 - Administrator access for software updates and selected setup steps
 - Homebrew for `updateall`; `setup` installs it if missing
 - `mas` for Mac App Store updates
-- Nix, Dropbox, and a QMK checkout are optional for their corresponding `updateall` steps
+- Nix is optional for corresponding `updateall` steps
 
 ## License
 
